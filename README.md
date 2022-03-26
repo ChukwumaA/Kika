@@ -1,6 +1,6 @@
-# Instagram Clone API
+# Kika api
 
-A basic clone of Instagram API service with the following features:
+A basic feature of an e-commerce service with the following features:
 
 ### Users can :
 
