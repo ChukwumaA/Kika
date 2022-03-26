@@ -1,0 +1,24 @@
+::: Things I've done (Ifechi)
+- I added username to the schemas of both user & buyer schemas
+- I also fixed the logic to check use username if email is not 
+  present at login for the User endpoint
+
+
+::: Questions
+1. Can't we use the pattern of auth controller (&route) for the buyer controller(&route) ?
+   - Its a bit confusing compared to the auth controller and route
+   - I'd love to learn why you its like that
+
+2. Since signup requirements are the same for both user and buyer, 
+    can't we simply use the auth route/controller for that?
+    - Schema can then have a 'role' property which will be sent through the request
+    depending on the value from the frontend page that the user is signing up or signing in from.
+
+3. The isAdmin property in user schema does it mean us(the owners who will have acces to the backend/database)
+    or Vendors because they can post?
+
+
+::: Suggestions
+1. All user and vendors can be served either from /auth/... or /accounts/...
+2. If 1 is not possible, then can we simply call change user to vendor for easy readability
+3. We can use ratings to show validation of vendors

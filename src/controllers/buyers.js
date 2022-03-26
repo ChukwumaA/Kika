@@ -6,6 +6,7 @@ const {isAdmin,} = require ('../middleware/auth')
 
 const buyerRouter = express.Router();
 
+
 buyerRouter.get(
   '/',
   auth,
@@ -66,6 +67,10 @@ buyerRouter.delete(
     }
   })
 );
+
+// @desc      signin Buyer
+// @route     POST /api/v1/buyer/signin
+// @access    Public
 buyerRouter.post(
   '/signin',
   asyncHandler(async (req, res) => {
@@ -76,11 +81,15 @@ buyerRouter.post(
   })
 );
 
+// @desc      signup Buyer
+// @route     POST /api/v1/buyer/signup
+// @access    Public
 buyerRouter.post(
   '/signup',
   asyncHandler(async (req, res) => {
     const newBuyer = new Buyer({
       name: req.body.name,
+      username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password),
     });
@@ -88,12 +97,16 @@ buyerRouter.post(
     res.send({
       _id: user._id,
       name: user.name,
+      username: user.username,
       email: user.email,
       isAdmin: user.isAdmin,
     });
   })
 );
 
+// @desc      update Buyer
+// @route     POST /api/v1/buyer/profile
+// @access    Private
 buyerRouter.put(
   '/profile',
   auth,
@@ -101,6 +114,7 @@ buyerRouter.put(
     const user = await Buyer.findById(req.user._id);
     if (user) {
       user.name = req.body.name || user.name;
+      user.username = req.body.username || user.username;
       user.email = req.body.email || user.email;
       if (req.body.password) {}
 

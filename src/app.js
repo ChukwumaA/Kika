@@ -28,7 +28,7 @@ app.use(require('routes/auth'))
 // Route files
 const auth = require('routes/auth');
 const users = require('routes/users'); //I edited the schema
-const post = require('routes/post'); //This has to go too.
+// const buyers = require('routes/buyerRoutes'); //I edited the schema
 
 
 
@@ -69,7 +69,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mount routers
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/users', users);
-app.use('/api/v1/posts', post);// This is irrelevant for an e-commerce api
+// app.use('/api/v1/buyer', users);
+
 
 app.use(errorHandler);
 

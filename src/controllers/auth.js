@@ -7,31 +7,38 @@ const User = require('models/User');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, username, email, password } = req.body;
+
 
   // Create user
-  const user = await User.create({
-    name,
-    email,
-    password,
-  });
-
-  sendTokenResponse(user, 200, res);
+    const user = await User.create({
+      name,
+      username,
+      email,
+      password,
+    });
+  
+    sendTokenResponse(user, 200, res);
+  
+  
 });
 
 // @desc      Login user
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
 
-  // Validate email & password
+  // Validate email or username & password
   if (!email || !password) {
-    return next(new ErrorResponse('Please provide an email and password', 400));
+    // Validate username
+    if (!username || !password){
+      return next(new ErrorResponse('Please provide a username and password', 400));
+    }
   }
 
   // Check for user
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({$or:[{ email },{ username }]}).select('+password');
 
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));

@@ -9,6 +9,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add full name'],
     },
+    
+    username: {
+      type: String,
+      required: [true, 'Please add a preferred username'],
+      unique: true,
+      match: [
+        /^(?!\d+)(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm,
+        `Username cannot start with a number or special character`,
+      ],
+    },
 
     isAdmin: { 
       type: Boolean, 
@@ -26,18 +36,20 @@ const UserSchema = new mongoose.Schema(
         'Please add a valid email',
       ],
     },
+
     password: {
       type: String,
       required: [true, 'Please add a password'],
       minlength: 8,
       select: false,
     },
+
     profilePic: {
       type: String,
       default: 'no-photo.jpg',
     },
-    followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-    following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }], //I dont this we need following feature
+    following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }], // This too
   },
   {
     timestamps: true,
