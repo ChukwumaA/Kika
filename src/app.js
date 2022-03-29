@@ -28,7 +28,12 @@ app.use(require('routes/auth'))
 // Route files
 const auth = require('routes/auth');
 const users = require('routes/users'); //I edited the schema
-const post = require('routes/post'); //This has to go too.
+const post = require('routes/post'); //This stays as users are vendors and post gives them the process to post their merchandise
+const seedRouter = require('./routes/seedRoutes')
+const productRouter = require('./routes/productRoutes')
+const userRouter = require('./routes/userRoutes')
+const orderRouter = require('./routes/orderRoutes')
+const uploadRouter = require('./routes/uploadRoutes')
 
 
 
@@ -67,9 +72,14 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
-app.use('/api/v1/auth', auth);
-app.use('/api/v1/users', users);
-app.use('/api/v1/posts', post);// This is irrelevant for an e-commerce api
+app.use('/api/auth', auth);
+app.use('/api/users', users);
+app.use('/api/posts', post);// This is relevant for a vendor in  an e-commerce api
+app.use('/api/upload', uploadRouter);
+app.use('/api/seed', seedRouter);
+app.use('/api/products', productRouter);
+app.use('/api/users', userRouter);
+app.use('/api/orders', orderRouter);
 
 app.use(errorHandler);
 

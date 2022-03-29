@@ -1,24 +1,12 @@
-/* const express = require('express');
-const { getUser } = require('controllers/users');
 
-const router = express.Router({ mergeParams: true });
-
-// middleware to Check user is logged in
-const { protect } = require('middleware/auth');
-
-router.use(protect);
-
-router.route('/:id').get(getUser);
-
-module.exports = router;
- */
 
 const express = require('express')
 const expressAsyncHandler = require('expressAsyncHandler')
 const Order = require ('../models/Order')
 const Buyer = require('../models/Buyers')
 const Product = require('../models/Products')
-const { protect, isAdmin } = require('../middleware/auth');
+const { isAdmin } = require('../middleware/auth');
+const auth = require('../middleware/auth')
 const { mailgun, payOrderEmailTemplate } = require('../middleware/utils');
 //const { getUser } = require('controllers/users');
 //const { getBuyer } = require('controllers/buyers');
@@ -29,6 +17,7 @@ orderRouter.use(protect);
 
 orderRouter.get(
     '/',
+    auth,
     isAdmin,
     expressAsyncHandler(async(req, res) => {
         const orders = await Order.find().populate('user', 'name');
@@ -38,7 +27,7 @@ orderRouter.get(
 
 orderRouter.post(
     '/',
-    //protect,
+    auth,
     expressAsyncHandler(async (req, res) => {
       const newOrder = new Order({
         orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
@@ -57,7 +46,7 @@ orderRouter.post(
 
 orderRouter.get(
     '/summary',
-    //protect,
+    auth,
     isAdmin,
     expressAsyncHandler(async (req, res) => {
       const orders = await Order.aggregate([
@@ -121,7 +110,7 @@ orderRouter.get(
 
 orderRouter.put(
     '/:id/deliver',
-    //isAuth,
+    auth,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
       if (order) {
@@ -137,7 +126,7 @@ orderRouter.put(
 
 orderRouter.put(
     '/:id/pay',
-    //isAuth,
+    auth,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id).populate(
         'user',
@@ -181,7 +170,7 @@ orderRouter.put(
 
 orderRouter.delete(
     '/:id',
-    //isAuth,
+    auth,
     isAdmin,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
