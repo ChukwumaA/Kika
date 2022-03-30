@@ -27,9 +27,9 @@ app.use(require('routes/auth'))
 
 // Route files
 const auth = require('routes/auth');
-const users = require('routes/users'); //I edited the schema
-// const buyers = require('routes/buyerRoutes'); //I edited the schema
-
+const vendor = require('routes/vendorRoutes'); //I edited the schema
+const buyer = require('routes/buyerRoutes'); //I edited the schema
+const product = require('routes/productRoutes'); 
 
 
 // Cookie parser
@@ -66,10 +66,15 @@ app.use(cors());
 // Set static folder for uploads and others
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
 // Mount routers
 app.use('/api/v1/auth', auth);
-app.use('/api/v1/users', users);
-// app.use('/api/v1/buyer', users);
+app.use('/api/v1/vendor', vendor);
+app.use('/api/v1/buyer', buyer);
+app.use('/api/v1/product', product);
+
+app.use("**",(req, res) =>res.status(404).send({message: "Route not found"}))
 
 
 app.use(errorHandler);

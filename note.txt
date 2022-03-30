@@ -22,3 +22,16 @@
 1. All user and vendors can be served either from /auth/... or /accounts/...
 2. If 1 is not possible, then can we simply call change user to vendor for easy readability
 3. We can use ratings to show validation of vendors
+
+{
+      "name": "sample name",
+      "slug": "sample-name-",
+      "image": "/images/p1.jpg",
+      "price": 0,
+      "category": "sample category",
+      "brand": "sample brand",
+      "countInStock": 0,
+      "rating": 0,
+      "numReviews": 0,
+      "description": "sample description"
+}

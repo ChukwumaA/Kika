@@ -1,21 +1,21 @@
 const express = require("express");
 const {
-  getBuyers,
-  getBuyer,
+  getVendors,
+  getVendor,
   register,
   login,
   logout,
   updateDetails,
   updatePassword,
   deleteAccount
-} = require("controllers/buyers");
+} = require("controllers/vendors");
 
 const router = express.Router();
 
 const { protect } = require("middleware/auth");
 
-router.get("/", getBuyers);
-router.get("/:id", getBuyer);
+router.get("/", getVendors);
+router.get("/:id", getVendor);
 router.post("/register", register);
 router.post("/login", login);
 router.get("/logout", logout);

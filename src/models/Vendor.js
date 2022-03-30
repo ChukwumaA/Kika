@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { jwt_secret, jwt_expiry } = require('../config');
 
-const UserSchema = new mongoose.Schema(
+const VendorSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -19,13 +19,6 @@ const UserSchema = new mongoose.Schema(
         `Username cannot start with a number or special character`,
       ],
     },
-
-    isAdmin: { 
-      type: Boolean, 
-      default: true, 
-      required: true 
-    },
-
 
     email: {
       type: String,
@@ -48,8 +41,27 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: 'no-photo.jpg',
     },
-    followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }], //I dont this we need following feature
-    following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }], // This too
+
+    role: {
+      type: String,
+      required: true,
+      default:"vendor"
+    },
+    
+    isAdmin: { 
+      type: Boolean, 
+      default: false, 
+      required: true 
+    },
+    
+    isVendor: {
+      type: Boolean, 
+      default: true, 
+      required: true 
+    },
+
+    followers: [{ type: mongoose.Schema.ObjectId, ref: ['Vendor', 'Buyer'] }], //I dont this we need following feature
+    following: [{ type: mongoose.Schema.ObjectId, ref: ['Vendor' ,'Buyer'] }], // This too
   },
   {
     timestamps: true,
@@ -57,7 +69,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Encrypt password using bcrypt before saving to database
-UserSchema.pre('save', async function (next) {
+VendorSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -67,15 +79,15 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function () {
+VendorSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, jwt_secret, {
     expiresIn: jwt_expiry,
   });
 };
 
 // Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function (enteredPassword) {
+VendorSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Vendor', VendorSchema);

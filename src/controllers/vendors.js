@@ -2,30 +2,31 @@ const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const sendTokenResponse = require("utils/sendTokenResponse");
 const Buyer = require("../models/Buyer");
-const User = require("../models/Vendor");
+const Vendor = require("../models/Vendor");
+const Product = require("../models/Product");
 
-// @desc      Get all Buyers
-// @route     GET /api/v1/buyer
+// @desc      Get all Vendors
+// @route     GET /api/v1/vendor
 // @access    Public
-exports.getBuyers = asyncHandler(async (req, res) => {
-  const buyers = await Buyer.find({});
-  res.send(buyers);
+exports.getVendors = asyncHandler(async (req, res) => {
+  const vendors = await Vendor.find({});
+  res.send(vendors);
 });
 
-// @desc      Get a Buyer
-// @route     GET /api/v1/buyer/:id
+// @desc      Get a Vendor
+// @route     GET /api/v1/vendor/:id
 // @access    Public
-exports.getBuyer = asyncHandler(async (req, res) => {
-  const buyer = await Buyer.findById(req.params.id);
-  if (buyer) {
-    res.send(buyer);
+exports.getVendor = asyncHandler(async (req, res) => {
+  const vendor = await Vendor.findById(req.params.id);
+  if (vendor) {
+    res.send(vendor);
   } else {
-    new ErrorResponse(`Buyer not found with id of ${req.params.id}`, 404);
+    new ErrorResponse(`Vendor not found with id of ${req.params.id}`, 404);
   }
 });
 
-// @desc      Register Buyer
-// @route     POST /api/v1/buyers/signup
+// @desc      Register Vendor
+// @route     POST /api/v1/vendors/signup
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, username, email, password } = req.body;
@@ -33,22 +34,22 @@ exports.register = asyncHandler(async (req, res, next) => {
   if (await Buyer.findOne({ $or: [{ email }, { username }] })) {
     return next(new ErrorResponse("Username or Email Already exists", 400));
   }
-  if (await User.findOne({ username })) {
+  if (await Vendor.findOne({ username })) {
     return next(new ErrorResponse("Username Already exists", 400));
   }
-  // Create Buyer
-  const buyer = await Buyer.create({
+  // Create Vendor
+  const vendor = await Vendor.create({
     name,
     username,
     email,
     password,
   });
 
-  sendTokenResponse(buyer, 200, res);
+  sendTokenResponse(vendor, 200, res);
 });
 
-// @desc      Login Buyer
-// @route     POST /api/v1/buyer/signin
+// @desc      Login Vendor
+// @route     POST /api/v1/vendor/signin
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, username, password } = req.body;
@@ -63,27 +64,27 @@ exports.login = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Check for Buyer
-  const buyer = await Buyer.findOne({ $or: [{ email }, { username }] }).select(
+  // Check for Vendor
+  const vendor = await Vendor.findOne({ $or: [{ email }, { username }] }).select(
     "+password"
   );
 
-  if (!buyer) {
+  if (!vendor) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
   // Check if password matches
-  const isMatch = await buyer.matchPassword(password);
+  const isMatch = await vendor.matchPassword(password);
 
   if (!isMatch) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
-  sendTokenResponse(buyer, 200, res);
+  sendTokenResponse(vendor, 200, res);
 });
 
-// @desc      Log buyer out / clear cookie
-// @route     GET /api/v1/buyer/logout
+// @desc      Log vendor out / clear cookie
+// @route     GET /api/v1/vendor/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
   res.cookie("token", "none", {
@@ -97,8 +98,8 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc      Update Buyer details
-// @route     PATCH /api/v1/buyer/profile
+// @desc      Update Vendor details
+// @route     PATCH /api/v1/vendor/profile
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const data = req.body;
@@ -107,29 +108,30 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
   const is_valid = to_update.every((update) => valid_keys.includes(update));
   if (!is_valid)
     return res.status(400).send({
-      message: "could not edit buyer details",
+      message: "could not edit vendor details",
     });
+
 
   try {
     const { username } = data;
     //Check if user wants to update to an already existing username
-    if (username && (await User.findOne({ username }))) {
+    if (username && (await Vendor.findOne({ username }))) {
       return next(new ErrorResponse("Username already exists", 400));
     }
     const fieldsToUpdate = {
       ...data,
     };
 
-    const buyer = await Buyer.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+    const vendor = await Vendor.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
       new: true,
       runValidators: true,
     });
 
-    if (!buyer) {
+    if (!vendor) {
       return next(new ErrorResponse("Internal server error", 401));
     }
 
-    sendTokenResponse(buyer, 200, res);
+    sendTokenResponse(vendor, 200, res);
   } catch (error) {
     if (error.code === 11000) {
       return res
@@ -144,39 +146,39 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
   }
 });
 
-// @desc      Update Buyer Password
-// @route     PATCH /api/v1/buyer/updatepassword
+// @desc      Update Vendor Password
+// @route     PATCH /api/v1/vendor/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const buyer = await Buyer.findById(req.user._id).select("+password");
+  const vendor = await Vendor.findById(req.user._id).select("+password");
 
   // Check current password
-  if (!(await buyer.matchPassword(req.body.currentPassword))) {
+  if (!(await vendor.matchPassword(req.body.currentPassword))) {
     return next(new ErrorResponse("Password is incorrect", 401));
   }
 
-  buyer.password = req.body.newPassword;
-  await buyer.save();
+  vendor.password = req.body.newPassword;
+  await vendor.save();
 
-  sendTokenResponse(buyer, 200, res);
+  sendTokenResponse(vendor, 200, res);
 });
 
-// @desc      Delete Buyers
-// @route     Delete /api/v1/buyer/:id
+// @desc      Delete Vendors
+// @route     Delete /api/v1/vendor/:id
 // @access    Private
 exports.deleteAccount = asyncHandler(async (req, res) => {
-  const buyer = await Buyer.findById(req.params.id);
-  if (buyer) {
-    if (buyer.email === "admin@example.com") {
+  const vendor = await Vendor.findById(req.params.id);
+  if (vendor) {
+    if (vendor.email === "admin@example.com") {
       new ErrorResponse(
-        `Can Not Delete Admin Buyer with id of ${req.params.id}`,
+        `Can Not Delete Admin Vendor with id of ${req.params.id}`,
         404
       );
       return;
     }
-    await buyer.remove();
-    res.send({ message: "Buyer Deleted" });
+    await vendor.remove();
+    res.send({ message: "Vendor Deleted" });
   } else {
-    new ErrorResponse(`Buyer not found with id of ${req.params.id}`, 404);
+    new ErrorResponse(`Vendor not found with id of ${req.params.id}`, 404);
   }
 });
