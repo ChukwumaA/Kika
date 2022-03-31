@@ -1,5 +1,5 @@
 const express = require('express');
-const { buyerRouter } = require('../controllers/buyers');
+const buyerRouter  = require('../controllers/buyers');
 
 const router = express.Router({mergeParams: true});
 

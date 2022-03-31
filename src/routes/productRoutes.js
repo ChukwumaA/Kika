@@ -1,8 +1,8 @@
 const express = require('express')
-const expressAsyncHandler = require('expressAsyncHandler')
+const expressAsyncHandler = require('express-async-handler')
 const Product = require('../models/Products')
-const auth = require('../middleware/auth')
-const{ auth } = require('../middleware/auth')
+//const protect, authorize = require('../middleware/protect, authorize')
+const{ protect, authorize, isAdmin } = require('../middleware/auth')
 
 const productRouter = express.Router();
 
@@ -13,7 +13,7 @@ productRouter.get('/', async (req, res) => {
 
 productRouter.post(
   '/',
-  auth,
+  protect, authorize,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const newProduct = new Product({
@@ -35,7 +35,7 @@ productRouter.post(
 
 productRouter.put(
   '/:id',
-  auth,
+  protect, authorize,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
@@ -60,7 +60,7 @@ productRouter.put(
 
 productRouter.delete(
   '/:id',
-  auth,
+  protect, authorize,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
@@ -75,7 +75,7 @@ productRouter.delete(
 
 productRouter.post(
   '/:id/reviews',
-  auth,
+  protect, authorize,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId);
@@ -113,7 +113,7 @@ const PAGE_SIZE = 3;
 
 productRouter.get(
   '/admin',
-  auth,
+  protect, authorize,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
@@ -236,4 +236,5 @@ productRouter.get('/:id', async (req, res) => {
   }
 });
 
-export default productRouter;
+
+module.exports = productRouter;

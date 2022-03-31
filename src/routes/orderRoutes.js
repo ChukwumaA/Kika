@@ -1,12 +1,11 @@
 
 
 const express = require('express')
-const expressAsyncHandler = require('expressAsyncHandler')
+const expressAsyncHandler = require('express-async-handler')
 const Order = require ('../models/Order')
 const Buyer = require('../models/Buyers')
 const Product = require('../models/Products')
-const { isAdmin } = require('../middleware/auth');
-const auth = require('../middleware/auth')
+const { protect, authorize, isAdmin } = require('../middleware/auth');
 const { mailgun, payOrderEmailTemplate } = require('../middleware/utils');
 //const { getUser } = require('controllers/users');
 //const { getBuyer } = require('controllers/buyers');
@@ -17,7 +16,8 @@ orderRouter.use(protect);
 
 orderRouter.get(
     '/',
-    auth,
+    protect,
+    authorize,
     isAdmin,
     expressAsyncHandler(async(req, res) => {
         const orders = await Order.find().populate('user', 'name');
@@ -27,7 +27,8 @@ orderRouter.get(
 
 orderRouter.post(
     '/',
-    auth,
+    protect,
+    authorize,
     expressAsyncHandler(async (req, res) => {
       const newOrder = new Order({
         orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
@@ -46,7 +47,8 @@ orderRouter.post(
 
 orderRouter.get(
     '/summary',
-    auth,
+    protect,
+    authorize,
     isAdmin,
     expressAsyncHandler(async (req, res) => {
       const orders = await Order.aggregate([
@@ -110,7 +112,8 @@ orderRouter.get(
 
 orderRouter.put(
     '/:id/deliver',
-    auth,
+    protect,
+    authorize,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
       if (order) {
@@ -126,7 +129,8 @@ orderRouter.put(
 
 orderRouter.put(
     '/:id/pay',
-    auth,
+    protect,
+    authorize,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id).populate(
         'user',
@@ -170,7 +174,8 @@ orderRouter.put(
 
 orderRouter.delete(
     '/:id',
-    auth,
+    protect,
+    authorize,
     isAdmin,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
@@ -183,4 +188,4 @@ orderRouter.delete(
     })
   );
   
-  export default orderRouter;
+module.exports = orderRouter;

@@ -1,14 +1,16 @@
 const ErrorResponse = require('../utils/errorResponse')
+const express = require('express')
 const asyncHandler = require('../middleware/async')
 const Buyer = require('../models/Buyers')
-const auth = require('../middleware/auth')
-const {isAdmin,} = require ('../middleware/auth')
+//const auth = require('../middleware/auth')
+const {protect, authorize, isAdmin,} = require ('../middleware/auth')
 
 const buyerRouter = express.Router();
 
 buyerRouter.get(
   '/',
-  auth,
+  protect,
+  authorize,
   isAdmin,
   asyncHandler(async (req, res) => {
     const users = await Buyer.find({});
@@ -18,7 +20,8 @@ buyerRouter.get(
 
 buyerRouter.get(
   '/:id',
-  auth,
+  protect,
+  authorize,
   isAdmin,
   asyncHandler(async (req, res) => {
     const user = await Buyer.findById(req.params.id);
@@ -32,7 +35,8 @@ buyerRouter.get(
 
 buyerRouter.put(
   '/:id',
-  auth,
+  protect,
+  authorize,
   isAdmin,
   asyncHandler(async (req, res) => {
     const user = await Buyer.findById(req.params.id);
@@ -50,7 +54,8 @@ buyerRouter.put(
 
 buyerRouter.delete(
   '/:id',
-  auth,
+  protect,
+  authorize,
   isAdmin,
   asyncHandler(async (req, res) => {
     const user = await Buyer.findById(req.params.id);
@@ -96,7 +101,8 @@ buyerRouter.post(
 
 buyerRouter.put(
   '/profile',
-  auth,
+  protect,
+  authorize,
   asyncHandler(async (req, res) => {
     const user = await Buyer.findById(req.user._id);
     if (user) {
@@ -118,6 +124,6 @@ buyerRouter.put(
   })
 );
 
-export default buyerRouter;
+module.exports = buyerRouter;
 
 

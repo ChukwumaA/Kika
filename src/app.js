@@ -31,7 +31,7 @@ const users = require('routes/users'); //I edited the schema
 const post = require('routes/post'); //This stays as users are vendors and post gives them the process to post their merchandise
 const seedRouter = require('./routes/seedRoutes')
 const productRouter = require('./routes/productRoutes')
-const userRouter = require('./routes/userRoutes')
+const buyerRouter = require('./routes/buyerRoutes')
 const orderRouter = require('./routes/orderRoutes')
 const uploadRouter = require('./routes/uploadRoutes')
 
@@ -78,7 +78,7 @@ app.use('/api/posts', post);// This is relevant for a vendor in  an e-commerce a
 app.use('/api/upload', uploadRouter);
 app.use('/api/seed', seedRouter);
 app.use('/api/products', productRouter);
-app.use('/api/users', userRouter);
+app.use('/api/buyers', buyerRouter);
 app.use('/api/orders', orderRouter);
 
 app.use(errorHandler);

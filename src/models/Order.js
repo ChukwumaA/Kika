@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-
 const orderSchema = new mongoose.Schema(
   {
     orderItems: [
@@ -22,7 +21,7 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
       state: { type: String, required: true },
-      country: {typr: String, required: true},
+      country: {type: String, required: true},
     },
     paymentMethod: { type: String, required: true },
     paymentResult: {
@@ -40,10 +39,11 @@ const orderSchema = new mongoose.Schema(
     isDelivered: { type: Boolean, default: false },
     deliveredAt: { type: Date },
   },
+
   {
     timestamps: true,
   }
 );
 
 const Order = mongoose.model('Order', orderSchema);
-export default Order;
+module.exports = Order;

@@ -1,4 +1,5 @@
-import bcrypt from 'bcryptjs';
+
+const bcrypt = require('bcryptjs') 
 
 const data = {
   buyers: [
@@ -70,4 +71,5 @@ const data = {
     },
   ],
 };
-export default data;
+
+module.exports = data;

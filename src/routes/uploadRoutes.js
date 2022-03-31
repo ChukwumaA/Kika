@@ -1,10 +1,9 @@
 //Dependencies
 const express = require('express');
 const multer = require('multer');
-import { v2 as cloudinary } from 'cloudinary';
+const  cloudinary  = require ('cloudinary').v2;
 const streamifier = require('streamifier')
-const auth = require('../middleware/auth')
-const {isAdmin} = require('../middleware/auth')
+const {protect, authorize, isAdmin} = require('../middleware/auth')
 
 const upload = multer();
 
@@ -12,7 +11,7 @@ const uploadRouter = express.Router();
 
 uploadRouter.post(
     '/',
-    auth,
+    protect, authorize,
     isAdmin,
     upload.single('file'),
     async (req,res) => {
