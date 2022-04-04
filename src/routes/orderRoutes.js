@@ -1,24 +1,9 @@
-/* const express = require('express');
-const { getUser } = require('controllers/users');
-
-const router = express.Router({ mergeParams: true });
-
-// middleware to Check user is logged in
-const { protect } = require('middleware/auth');
-
-router.use(protect);
-
-router.route('/:id').get(getUser);
-
-module.exports = router;
- */
-
 const express = require('express')
 const expressAsyncHandler = require('expressAsyncHandler')
 const Order = require ('../models/Order')
-const Buyer = require('../models/Buyers')
-const Product = require('../models/Products')
-const { protect, isAdmin } = require('../middleware/auth');
+const Buyer = require('../models/Buyer')
+const Product = require('../models/Product')
+const { protect, isVendor } = require('../middleware/auth');
 const { mailgun, payOrderEmailTemplate } = require('../middleware/utils');
 //const { getUser } = require('controllers/users');
 //const { getBuyer } = require('controllers/buyers');
@@ -29,7 +14,7 @@ orderRouter.use(protect);
 
 orderRouter.get(
     '/',
-    isAdmin,
+    isVendor,
     expressAsyncHandler(async(req, res) => {
         const orders = await Order.find().populate('user', 'name');
         res.send(orders);
@@ -38,7 +23,7 @@ orderRouter.get(
 
 orderRouter.post(
     '/',
-    //protect,
+    protect,
     expressAsyncHandler(async (req, res) => {
       const newOrder = new Order({
         orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
@@ -58,7 +43,7 @@ orderRouter.post(
 orderRouter.get(
     '/summary',
     //protect,
-    isAdmin,
+    isVendor,
     expressAsyncHandler(async (req, res) => {
       const orders = await Order.aggregate([
         {
@@ -181,8 +166,7 @@ orderRouter.put(
 
 orderRouter.delete(
     '/:id',
-    //isAuth,
-    isAdmin,
+    isVendor,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
       if (order) {
