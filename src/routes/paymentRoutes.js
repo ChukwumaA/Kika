@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 
-router.post("/", chargeCard);
-router.post("/", charge_ng_acct);
+router.post("/fromCard/flutterwave", chargeCard);
+router.post("/fromBank/flutterwave", charge_ng_acct);
 
 module.exports = router;

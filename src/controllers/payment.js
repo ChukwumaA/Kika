@@ -7,7 +7,7 @@ const payload = {
     "card_number": "5531886652142950",
     "cvv": "564",
     "expiry_month": "09",
-    "expiry_year": "21",
+    "expiry_year": "22",
     "currency": "NGN",
     "amount": "100",
     "redirect_url": "https://www.google.com",
@@ -20,7 +20,7 @@ const payload = {
 };
 
 // @desc    charges nigerian bank account
-// @route   POST/api/v1/fromCard/flutterwave
+// @route   POST/api/v1/payment/fromCard/flutterwave
 // @access  Private   
 exports.chargeCard = async () => {
     try {
@@ -59,7 +59,7 @@ exports.chargeCard = async () => {
 }
 
 // @desc    charges nigerian bank account
-// @route   POST/api/v1/fromBank/flutterwave
+// @route   POST/api/v1/payment/fromBank/flutterwave
 // @access  Private 
 exports.charge_ng_acct = async () => {
     try {
