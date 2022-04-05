@@ -22,7 +22,7 @@ const payload = {
 // @desc    charges nigerian bank account
 // @route   POST/api/v1/payment/fromCard/flutterwave
 // @access  Private   
-exports.chargeCard = async () => {
+exports.chargeCard = async (req, res) => {
     try {
         const response = await flw.Charge.card(payload)
         console.log(response)
@@ -51,17 +51,18 @@ exports.chargeCard = async () => {
         }
 
         console.log(response)
-
+        res.send(response)
 
     } catch (error) {
         console.log(error)
+        res.send(error)
     }
 }
 
 // @desc    charges nigerian bank account
 // @route   POST/api/v1/payment/fromBank/flutterwave
 // @access  Private 
-exports.charge_ng_acct = async () => {
+exports.charge_ng_acct = async (req, res) => {
     try {
         const payloadNG = {
             "tx_ref": "MC-1585dshdhdsdv5050e8", //This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.
@@ -76,8 +77,10 @@ exports.charge_ng_acct = async () => {
 
         const response = await flw.Charge.ng(payloadNG)
         console.log(response);
+        res.send(response)
     } catch (error) {
         console.log(error)
+        res.send(error)
     } ; 
 
 }
