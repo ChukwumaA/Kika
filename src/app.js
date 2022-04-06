@@ -75,6 +75,8 @@ app.use('/api/v1/vendor', vendor);
 app.use('/api/v1/buyer', buyer);
 app.use('/api/v1/product', product);
 app.use('/api/v1/payment', payment);
+app.use("/",(req, res) =>res.status(202).send({message: "Welcome to Kika Store"}))
+
 
 app.use("**",(req, res) =>res.status(404).send({message: "Route not found"}))
 
