@@ -1,9 +1,7 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("./async");
-const ErrorResponse = require("../utils/errorResponse");
-const { jwt_secret } = require("config");
-const Vendor = require("../models/Vendor");
-const Buyer = require("../models/Buyer");
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('./async');
+const ErrorResponse = require('../utils/errorResponse');
+const { jwt_secret } = require('config');
 
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
@@ -11,18 +9,19 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization.startsWith('Bearer')
   ) {
     // Set token from Bearer token in header
-    token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies.token) {
-    // Set token from cookie
-    token = req.cookies.token;
+    token = req.headers.authorization.split(' ')[1];
   }
+  // Set token from cookie
+  // else if (req.cookies.token) {
+  //   token = req.cookies.token;
+  // }
 
   // Make sure token exists
   if (!token) {
-    return next(new ErrorResponse("Not authorized to access this route", 401));
+    return next(new ErrorResponse('Not authorized to access this route', 401));
   }
 
   try {
@@ -40,7 +39,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     next();
   } catch (err) {
     return next(
-      new ErrorResponse("::Not authorized to access this route", 401)
+      new ErrorResponse('::Not authorized to access this route', 401)
     );
   }
 });
@@ -58,12 +57,4 @@ exports.authorize = (...roles) => {
     }
     next();
   };
-};
-
-exports.isVendor = (req, res, next) => {
-  if (req.user && req.user.isVendor) {
-    next();
-  } else {
-    res.status(401).send({ message: "Invalid Vendor Token" });
-  }
 };

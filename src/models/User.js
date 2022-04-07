@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { jwt_secret, jwt_expiry } = require('../config');
+const { jwt_secret, jwt_expiry } = require('config');
 
-const VendorSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, 'Please add full name'],
     },
-    
     username: {
       type: String,
       required: [true, 'Please add a preferred username'],
@@ -19,7 +19,6 @@ const VendorSchema = new mongoose.Schema(
         `Username cannot start with a number or special character`,
       ],
     },
-
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -29,39 +28,20 @@ const VendorSchema = new mongoose.Schema(
         'Please add a valid email',
       ],
     },
-
     password: {
       type: String,
       required: [true, 'Please add a password'],
-      minlength: 8,
+      minlength: 6,
       select: false,
     },
-
-    profilePic: {
-      type: String,
-      default: 'no-photo.jpg',
-    },
-
     role: {
       type: String,
       required: true,
-      default:"vendor"
+      enum: ['user', 'vendor'],
+      default: 'user',
     },
-    
-    isAdmin: { 
-      type: Boolean, 
-      default: false, 
-      required: true 
-    },
-    
-    isVendor: {
-      type: Boolean, 
-      default: true, 
-      required: true 
-    },
-
-    followers: [{ type: mongoose.Schema.ObjectId, ref: ['Vendor', 'Buyer'] }], //I dont this we need following feature
-    following: [{ type: mongoose.Schema.ObjectId, ref: ['Vendor' ,'Buyer'] }], // This too
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,
@@ -69,7 +49,7 @@ const VendorSchema = new mongoose.Schema(
 );
 
 // Encrypt password using bcrypt before saving to database
-VendorSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -79,15 +59,32 @@ VendorSchema.pre('save', async function (next) {
 });
 
 // Sign JWT and return
-VendorSchema.methods.getSignedJwtToken = function () {
+UserSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, jwt_secret, {
     expiresIn: jwt_expiry,
   });
 };
 
 // Match user entered password to hashed password in database
-VendorSchema.methods.matchPassword = async function (enteredPassword) {
+UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('Vendor', VendorSchema);
+// Generate and hash password token
+UserSchema.methods.getResetPasswordToken = function () {
+  // Generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash token and set to resetPasswordToken field
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set expire
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
+
+module.exports = mongoose.model('User', UserSchema);
