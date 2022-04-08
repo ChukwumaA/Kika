@@ -60,8 +60,8 @@ exports.authorize = (...roles) => {
   };
 };
 
-exports.isVendor = (req, res, next) => {
-  if (req.user && req.user.isVendor) {
+exports.isAdmin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
     next();
   } else {
     res.status(401).send({ message: "Invalid Vendor Token" });
