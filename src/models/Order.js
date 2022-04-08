@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema(
   {
@@ -11,7 +11,7 @@ const OrderSchema = new mongoose.Schema(
         price: { type: Number, required: true },
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Products' || 'Post',
+          ref: 'Product',
           required: true,
         },
       },
@@ -22,7 +22,7 @@ const OrderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
       state: { type: String, required: true },
-      country: {typr: String, required: true},
+      country: { type: String, required: true },
     },
     paymentMethod: { type: String, required: true },
     paymentResult: {
@@ -34,7 +34,11 @@ const OrderSchema = new mongoose.Schema(
     itemsPrice: { type: Number, required: true },
     shippingPrice: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },

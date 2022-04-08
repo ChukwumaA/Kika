@@ -7,12 +7,11 @@ const User = require('models/User');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, role } = req.body;
+  const { name, email, password, role } = req.body;
 
   // Create user
   const user = await User.create({
     name,
-    username,
     email,
     password,
     role,
@@ -25,19 +24,15 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  // Validate email/username & password
-  if ((!email || !username) && !password) {
-    return next(
-      new ErrorResponse('Please provide username/email and password', 400)
-    );
+  // Validate email & password
+  if (!email || !password) {
+    return next(new ErrorResponse('Please provide email and password', 400));
   }
 
   // Check for user
-  const user = await User.findOne({
-    $or: [{ email }, { username }],
-  }).select('+password');
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));
@@ -73,7 +68,8 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-    ...req.body,
+    name: req.body.name,
+    email: req.body.email,
   };
 
   const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {

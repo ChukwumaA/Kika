@@ -10,15 +10,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add full name'],
     },
-    username: {
-      type: String,
-      required: [true, 'Please add a preferred username'],
-      unique: true,
-      match: [
-        /^(?!\d+)(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm,
-        `Username cannot start with a number or special character`,
-      ],
-    },
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -37,7 +28,7 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['user', 'vendor'],
+      enum: ['user', 'vendor','admin'],
       default: 'user',
     },
     resetPasswordToken: String,

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const { jwt_secret } = require('config');
+const User = require('models/User');
 
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
@@ -9,38 +10,31 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith("Bearer")
   ) {
     // Set token from Bearer token in header
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
+    // console.log(token);
   }
-  // Set token from cookie
   // else if (req.cookies.token) {
+  //   // Set token from cookie
   //   token = req.cookies.token;
   // }
 
   // Make sure token exists
   if (!token) {
-    return next(new ErrorResponse('Not authorized to access this route', 401));
+    return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 
   try {
     // Verify token
     const decoded = jwt.verify(token, jwt_secret);
 
-    //Find user in 'user DB'
-    req.user = await Vendor.findById(decoded.id);
-
-    //If there's no user in 'user DB' check in 'buyer DB'
-    if (!req.user) {
-      req.user = await Buyer.findById(decoded.id);
-    }
+    req.user = await User.findById(decoded.id);
 
     next();
   } catch (err) {
-    return next(
-      new ErrorResponse('::Not authorized to access this route', 401)
-    );
+    return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 });
 

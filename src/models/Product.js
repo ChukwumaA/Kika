@@ -27,7 +27,7 @@ const ProductSchema = new mongoose.Schema(
     numReviews: { type: Number, required: true },
     vendor_id: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Vendor',
+      ref: 'User',
       required: true,
     },
     reviews: [ReviewSchema],
