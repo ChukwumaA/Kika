@@ -38,6 +38,8 @@ npm install -g win-node-env (this install node.env globally)
 ## Routes and Payload
 
 ```
+## Authentication
+
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -94,4 +96,26 @@ npm install -g win-node-env (this install node.env globally)
 // @param     :product_id
 
 
-    
+## Reviews
+
+// @desc      Post reviews
+// @route     POST /api/v1/products/:id/reviews
+// @access    Private (User and Vendors)
+// @payload   {name, rating ,comment}
+
+
+## Admin
+
+// @desc      Get all Users
+// @route     GET /api/v1/users
+// @access    Private (Admin)
+
+// @desc      Get a User
+// @route     GET /api/v1/users/:id
+// @access    Private (Admin)
+// @param     {:user_id}
+
+// @desc      Delete User
+// @route     Delete /api/v1/user/:id
+// @access    Private (Admin)
+// @param     {:user_id}
