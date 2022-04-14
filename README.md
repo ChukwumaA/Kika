@@ -9,8 +9,8 @@ A basic feature of an e-commerce service with the following features:
 - Register
 - Login 
 - Logout
-- Updatedetails
-- Updatepassword
+- Update details
+- Update password
 
 ## Usage
 
