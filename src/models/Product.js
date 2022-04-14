@@ -25,7 +25,7 @@ const ProductSchema = new mongoose.Schema(
     countInStock: { type: Number, required: true },
     rating: { type: Number, required: true },
     numReviews: { type: Number, required: true },
-    vendor_id: {
+    vendor: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: true,
