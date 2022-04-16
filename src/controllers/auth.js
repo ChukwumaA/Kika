@@ -1,90 +1,48 @@
-const ErrorResponse = require("utils/errorResponse");
-const asyncHandler = require("middleware/async");
-const sendTokenResponse = require("utils/sendTokenResponse");
-const Vendor = require("models/Vendor");
-const Buyer = require("models/Buyer");
+const ErrorResponse = require('utils/errorResponse');
+const asyncHandler = require('middleware/async');
+const sendTokenResponse = require('utils/sendTokenResponse');
+const User = require('models/User');
 
 // @desc      Register user
-// @route     POST /api/v1/auth/register/:accounttype
+// @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password} = req.body;
-  const accountType = req.params.accounttype
-
-  // Assign working Database collection
-  const UserType = accountType == "vendor" ? Vendor : accountType == "buyer" ? Buyer : undefined;
-
-  // If i am a vendor and I want to open a buyer account,
-  // I can use the same email for buyer db but not the same username for buyer db
-
-  //Check if email  exists in chosen database
-    if (await UserType.findOne({ email })) {
-      return next(new ErrorResponse("Email Already exists", 400));
-    }
-  //Check if Username exists in chosen database
-    if (await UserType.findOne({ username })) {
-      return next(new ErrorResponse("Username Already exists", 400));
-    }
-
-    
-  //If isVendor is true check if username exists in Buyer DB
-  //Hence - You can have a vendor and buyer account with same email but different usernames
-    if (accountType == "vendor" && await Buyer.findOne({ username })) {
-      return next(new ErrorResponse("Username Already exists", 400));
-    }
-  //If !isVendor is true check if username exists in Vendor DB 
-  //Hence - You can have a vendor and buyer account with same email but different usernames
-    if (accountType == "buyer" && await Vendor.findOne({ username })) {
-      return next(new ErrorResponse("Username Already exists", 400));
-    }
-   
+  const { name, email, password, role } = req.body;
 
   // Create user
-  const user = await UserType.create({
+  const user = await User.create({
     name,
-    username,
     email,
     password,
+    role,
   });
 
   sendTokenResponse(user, 200, res);
 });
 
 // @desc      Login user
-// @route     POST /api/v1/auth/login/:vendor or /api/v1/auth/login/:buyer
+// @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const accountType = req.params.accounttype
+  const { email, password } = req.body;
 
-  // Assign working Database collection
-  const UserType = accountType == "vendor" ? Vendor : accountType == "buyer" ? Buyer : undefined;
-
-  const { email, username, password } = req.body;
- 
-  // Validate email or username & password
+  // Validate email & password
   if (!email || !password) {
-    // Validate username
-    if (!username || !password) {
-      return next(
-        new ErrorResponse("Please provide a username and password", 400)
-      );
-    }
+    return next(new ErrorResponse('Please provide email and password', 400));
   }
 
   // Check for user
-  const user = await UserType.findOne({
-    $or: [{ email }, { username }],
-  }).select("+password");
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
-    return next(new ErrorResponse("Invalid credentials", 401));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);
 
   if (!isMatch) {
-    return next(new ErrorResponse("Invalid credentials", 401));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   sendTokenResponse(user, 200, res);
@@ -94,7 +52,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie("token", "none", {
+  res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
@@ -105,33 +63,39 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/profile
+// @access    Private
+exports.getProfile = asyncHandler(async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    data: req.user,
+  });
+});
+
 // @desc      Update user details
 // @route     PUT /api/v1/auth/updatedetails
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
-  const UserType = req.user.isVendor ? Vendor : Buyer; //Assign working Database collection
-
-  //Block admin, password and role updates
-  if ("isAdmin" in req.body || "password" in req.body || "role" in req.body) {
-    return next(new ErrorResponse("Operation not authorized", 401));
-  }
-
   const fieldsToUpdate = {
-    ...req.body,
+    name: req.body.name,
+    email: req.body.email,
   };
 
-  const user = await UserType.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
     new: true,
     runValidators: true,
   });
 
   if (!user) {
-    return next(new ErrorResponse("Invalid credentials", 401));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   res.status(200).json({
     success: true,
-    message: "Details updated!",
+    message: 'Details updated!',
     data: user,
   });
 });
@@ -140,12 +104,11 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const UserType = req.user.isVendor ? Vendor : Buyer; // Assign working Database collection
-  const user = await UserType.findById(req.user._id).select("+password");
+  const user = await User.findById(req.user.id).select('+password');
 
   // Check current password
   if (!(await user.matchPassword(req.body.currentPassword))) {
-    return next(new ErrorResponse("Password is incorrect", 401));
+    return next(new ErrorResponse('Password is incorrect', 401));
   }
 
   user.password = req.body.newPassword;
@@ -153,3 +116,77 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
   sendTokenResponse(user, 200, res);
 });
+
+// @desc      Forgot password
+// @route     POST /api/v1/auth/forgotpassword
+// @access    Public
+// exports.forgotPassword = asyncHandler(async (req, res, next) => {
+//   const user = await User.findOne({ email: req.body.email });
+
+//   if (!user) {
+//     return next(new ErrorResponse('There is no user with that email', 404));
+//   }
+
+//   // Get reset token
+//   const resetToken = user.getResetPasswordToken();
+
+//   await user.save({ validateBeforeSave: false });
+
+//   // Create reset url
+//   const resetUrl = `${req.protocol}://${req.get(
+//     'host'
+//   )}/api/v1/auth/resetpassword/${resetToken}`;
+
+//   const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+//   try {
+//     await sendEmail({
+//       email: user.email,
+//       subject: 'Password reset token',
+//       message,
+//     });
+
+//     res.status(200).json({ success: true, data: 'Email sent' });
+//   } catch (err) {
+//     console.log(err);
+//     user.resetPasswordToken = undefined;
+//     user.resetPasswordExpire = undefined;
+
+//     await user.save({ validateBeforeSave: false });
+
+//     return next(new ErrorResponse('Email could not be sent', 500));
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     data: user,
+//   });
+// });
+
+// @desc      Reset password
+// @route     PUT /api/v1/auth/resetpassword/:resettoken
+// @access    Public
+// exports.resetPassword = asyncHandler(async (req, res, next) => {
+//   // Get hashed token
+//   const resetPasswordToken = crypto
+//     .createHash('sha256')
+//     .update(req.params.resettoken)
+//     .digest('hex');
+
+//   const user = await User.findOne({
+//     resetPasswordToken,
+//     resetPasswordExpire: { $gt: Date.now() },
+//   });
+
+//   if (!user) {
+//     return next(new ErrorResponse('Invalid token', 400));
+//   }
+
+//   // Set new password
+//   user.password = req.body.password;
+//   user.resetPasswordToken = undefined;
+//   user.resetPasswordExpire = undefined;
+//   await user.save();
+
+//   sendTokenResponse(user, 200, res);
+// });

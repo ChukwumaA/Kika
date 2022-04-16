@@ -35,3 +35,14 @@
       "numReviews": 0,
       "description": "sample description"
 }
+
+
+::: What was done? (Joshua)
+- Project structuring and code cleanup
+- Changed User model to include role to accommodate the different user roles
+- changed naming of some endpoints
+- "Authorize" in the auth middleware can be used to defined the roles that can 
+  access certain routes while "Protect" is used to ensure user is logged in on the route.
+- '/seed' route in the auth routes to add dummy user data from data.js
+-
+

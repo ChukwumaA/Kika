@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 # Kika
-An e-commerce api
-=======
+An e-commerce api for Kika
 # Kika api
 
 A basic feature of an e-commerce service with the following features:
@@ -9,13 +7,15 @@ A basic feature of an e-commerce service with the following features:
 ### Users can :
 
 - Register
-- Login
-- Make posts 
-- See their profile
+- Login 
+- Logout
+- Update details
+- Update password
 
 ## Usage
 
-Add ".env" file to "/src/config/" and update the values/settings to your own, check "/src/config/sample_env.txt" for sample
+- Add "config.env" file to "/src/config/" folder and update the values to your own
+- Check "/src/config/envSample.txt" for sample
 
 ## Install Dependencies
 
@@ -33,7 +33,89 @@ npm run dev
 npm start
 
 run this before npm start
-npm install -g win-node-env
-this install node.env globally
+npm install -g win-node-env (this install node.env globally)
 ```
->>>>>>> aec5bc01e83310900803f1bb1ab1a07c82b5ae98
+## Routes and Payload
+
+```
+## Authentication
+
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+// @payload   { name, email, password, role }
+
+// @desc      Login user
+// @route     POST /api/v1/auth/login
+// @access    Public
+// @payload   { email, password } 
+
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+
+// @desc      Update user details
+// @route     PUT /api/v1/auth/updatedetails
+// @access    Private
+// @payload    {name or email or name and email}
+
+// @desc      Update password
+// @route     PUT /api/v1/auth/updatepassword
+// @access    Private
+// @payload   {password}
+
+## Products
+
+// @desc      Get all products
+// @route     GET /api/v1/products
+// @access    Public
+
+// @desc      Get product
+// @route     GET /api/v1/products/:id
+// @access    PUBLIC
+// @param     :product_id
+
+// @desc      Get products via slug
+// @route     GET /api/v1/products/slug/:slug
+// @access    PUBLIC
+// @param     :product_slug
+
+// @desc      Create a product
+// @route     Post /api/v1/products
+// @access    Private (Vendor)
+// @payload   { name, image, price, category, brand, countInStock, description }
+
+// @desc      Update a product
+// @route     PATCH /api/v1/products/:id
+// @access    Private
+// @payload   { name, image, price, category, brand, countInStock, description }
+
+// @desc      Delete a product
+// @route     DELETE /api/v1/products/:id
+// @access    Private (Vendor)
+// @param     :product_id
+
+
+## Reviews
+
+// @desc      Post reviews
+// @route     POST /api/v1/products/:id/reviews
+// @access    Private (User and Vendors)
+// @payload   {name, rating ,comment}
+
+
+## Admin
+
+// @desc      Get all Users
+// @route     GET /api/v1/users
+// @access    Private (Admin)
+
+// @desc      Get a User
+// @route     GET /api/v1/users/:id
+// @access    Private (Admin)
+// @param     {:user_id}
+
+// @desc      Delete User
+// @route     Delete /api/v1/user/:id
+// @access    Private (Admin)
+// @param     {:user_id}

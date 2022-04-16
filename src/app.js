@@ -10,28 +10,24 @@ const hpp = require('hpp');
 const cors = require('cors');
 require('colors');
 
+const errorHandler = require('middleware/error');
+const connectDB = require('config/db');
 
-const errorHandler = require('./middleware/error');
-const connectDB = require('./config/db');
-
-const { env } = require('./config');
+const { env } = require('config');
 
 // Connect to database
 connectDB();
 
 const app = express();
 
+// Route files
+const auth = require('routes/auth');
+const users = require('routes/users');
+const products = require('routes/products');
+const payments = require('routes/payments');
+
 // Body parser
 app.use(express.json());
-
-app.use(require('routes/auth'))
-
-// Route files
-const auth = require('./routes/auth');
-const vendor = require('./routes/vendorRoutes'); //I edited the schema
-const buyer = require('./routes/buyerRoutes'); //I edited the schema
-const product = require('./routes/productRoutes'); 
-const payment = require('./routes/paymentRoutes')
 
 // Cookie parser
 app.use(cookieParser());
@@ -65,22 +61,21 @@ app.use(hpp());
 app.use(cors());
 
 // Set static folder for uploads and others
-app.use(express.static(path.join(__dirname, 'public'))); 
-
-
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
 app.use('/api/v1/auth', auth);
-app.use('/api/v1/vendor', vendor);
-app.use('/api/v1/buyer', buyer);
-app.use('/api/v1/product', product);
-app.use('/api/v1/payment', payment);
+app.use('/api/v1/users', users);
+app.use('/api/v1/products', products);
+app.use('/api/v1/payments', payments);
 
-app.get("/",(req, res) =>res.status(202).send({message: "Welcome to Kika Store"}))
+app.get('/', (req, res) =>
+  res.status(202).send({ message: 'Welcome to Kika Store' })
+);
 
-
-app.use("**",(req, res) =>res.status(404).send({message: "Route not found"}))
-
+app.use('**', (req, res) =>
+  res.status(404).send({ message: 'Route not found' })
+);
 
 app.use(errorHandler);
 
