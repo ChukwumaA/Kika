@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
-const { jwt_secret } = require('config');
+const { jwt_secret } = require('../config/index');
 const User = require('models/User');
 
 // Protect routes

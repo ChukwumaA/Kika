@@ -14,8 +14,8 @@ A basic feature of an e-commerce service with the following features:
 
 ## Usage
 
-- Add "config.env" file to "/src/config/" folder and update the values to your own
-- Check "/src/config/envSample.txt" for sample
+- Add "process.env" file to "/src/process/" folder and update the values to your own
+- Check "/src/process/envSample.txt" for sample
 
 ## Install Dependencies
 

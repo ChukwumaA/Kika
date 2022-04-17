@@ -1,7 +1,9 @@
 const express = require('express');
-const Product = require('models/Product');
-const data = require('../data');
-const asyncHandler = require('middleware/async');
+const Product = require('../models/Product');
+const data = require('../data.js');
+const expressAsyncHandler = require('express-async-handler')
+//const asyncHandler = require('middleware/async');
+
 
 const {
   getProducts,
@@ -41,9 +43,9 @@ router.post('/:id/reviews', protect, authorize('user', 'vendor'), createReview);
 //Populate database with dummy data(products)
 router.get(
      '/seed',
-asyncHandler(async (req, res) => {
-     await Product.remove({});
-     const createdProducts = await Product.insertMany(data.products);
+expressAsyncHandler(async (req, res) => {
+     //await Product.remove({});
+     const createdProducts = await Product.insertMany(products);
      res.send({ createdProducts });
     })
   );
@@ -59,7 +61,7 @@ asyncHandler(async (req, res) => {
       const page = query.page || 1;
       const pageSize = query.pageSize || PAGE_SIZE;
   
-      const products = await Product.find()
+      const products = await Product.find(data)
         .skip(pageSize * (page - 1))
         .limit(pageSize);
       const countProducts = await Product.countDocuments();

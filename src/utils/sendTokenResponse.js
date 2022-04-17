@@ -1,4 +1,4 @@
-const { jwt_cookie_expiry, env } = require("config");
+const { jwt_cookie_expiry, env } = require("../config/index");
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {

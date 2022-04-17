@@ -39,7 +39,7 @@
   },
   "_moduleAliases": {
     "@root": ".",
-    "config": "./src/config",
+    "process": "./src/process",
     "controllers": "./src/controllers",
     "middleware": "./src/middleware",
     "models": "./src/models",

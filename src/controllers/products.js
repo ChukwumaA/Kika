@@ -1,16 +1,17 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
 const Product = require('models/Product');
+const data = require('../data')
 
 // @desc      Get all products
 // @route     GET /api/v1/products
 // @access    Public
 exports.getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  const products = await Product.find({data});
 
   res.status(200).json({
     success: true,
-    data: products,
+    clothes: data.products,
   });
 });
 
@@ -29,7 +30,7 @@ exports.getProduct = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Product retrieved!',
-    data: product,
+    cloth: data.products,
   });
 });
 
@@ -289,3 +290,5 @@ exports.createReview = asyncHandler(async (req, res) => {
     res.status(404).send({ message: 'Product Not Found' });
   }
 });
+
+

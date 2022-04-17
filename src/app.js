@@ -10,10 +10,10 @@ const hpp = require('hpp');
 const cors = require('cors');
 require('colors');
 
-const errorHandler = require('middleware/error');
-const connectDB = require('config/db');
+const errorHandler = require('./middleware/error');
+const connectDB = require('./config/db');
 
-const { env } = require('config');
+const { env } = require('./config');
 
 // Connect to database
 connectDB();
