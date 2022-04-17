@@ -1,7 +1,7 @@
 const express = require('express');
-// const Product = require('models/Product');
-// const data = require('../data');
-// const asyncHandler = require('middleware/async');
+const Product = require('models/Product');
+const data = require('../data');
+const asyncHandler = require('middleware/async');
 
 const {
   getProducts,
@@ -38,38 +38,38 @@ router.get('/search', searchProducts);
 
 router.post('/:id/reviews', protect, authorize('user', 'vendor'), createReview);
 
-// Populate database with dummy data(products)
-// router.get(
-//   '/seed',
-//   asyncHandler(async (req, res) => {
-//     await Product.remove({});
-//     const createdProducts = await Product.insertMany(data.products);
-//     res.send({ createdProducts });
-//   })
-// );
-
-// @desc      Get products
-// @route     GET /api/v1/product/vendor
-// @access    PUBLIC
-// router.get(
-//   '/vendor',
-//   protect,
-//   expressAsyncHandler(async (req, res) => {
-//     const { query } = req;
-//     const page = query.page || 1;
-//     const pageSize = query.pageSize || PAGE_SIZE;
-
-//     const products = await Product.find()
-//       .skip(pageSize * (page - 1))
-//       .limit(pageSize);
-//     const countProducts = await Product.countDocuments();
-//     res.send({
-//       products,
-//       countProducts,
-//       page,
-//       pages: Math.ceil(countProducts / pageSize),
-//     });
-//   })
-// );
+//Populate database with dummy data(products)
+router.get(
+     '/seed',
+asyncHandler(async (req, res) => {
+     await Product.remove({});
+     const createdProducts = await Product.insertMany(data.products);
+     res.send({ createdProducts });
+    })
+  );
+  
+  //@desc      Get products
+  //@route     GET /api/v1/product/vendor
+  //@access    PUBLIC
+  router.get(
+    '/vendor',
+    protect,
+    expressAsyncHandler(async (req, res) => {
+      const { query } = req;
+      const page = query.page || 1;
+      const pageSize = query.pageSize || PAGE_SIZE;
+  
+      const products = await Product.find()
+        .skip(pageSize * (page - 1))
+        .limit(pageSize);
+      const countProducts = await Product.countDocuments();
+      res.send({
+        products,
+        countProducts,
+        page,
+        pages: Math.ceil(countProducts / pageSize),
+      });
+    })
+  );
 
 module.exports = router;
