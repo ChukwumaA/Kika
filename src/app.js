@@ -10,32 +10,24 @@ const hpp = require('hpp');
 const cors = require('cors');
 require('colors');
 
+const errorHandler = require('./middleware/error');
+const connectDB = require('./config/db');
 
-const errorHandler = require('middleware/error');
-const connectDB = require('config/db');
-const { env } = require('config');
+const { env } = require('./config');
 
 // Connect to database
 connectDB();
 
 const app = express();
 
-// Body parser
-app.use(express.json());
-
-app.use(require('routes/auth'))
-
 // Route files
 const auth = require('routes/auth');
-const users = require('routes/users'); //I edited the schema
-const post = require('routes/post'); //This stays as users are vendors and post gives them the process to post their merchandise
-const seedRouter = require('./routes/seedRoutes')
-const productRouter = require('./routes/productRoutes')
-const buyerRouter = require('./routes/buyerRoutes')
-const orderRouter = require('./routes/orderRoutes')
-const uploadRouter = require('./routes/uploadRoutes')
+const users = require('routes/users');
+const products = require('routes/products');
+const payments = require('routes/payments');
 
-
+// Body parser
+app.use(express.json());
 
 // Cookie parser
 app.use(cookieParser());
@@ -72,14 +64,18 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
-app.use('/api/auth', auth);
-app.use('/api/users', users);
-app.use('/api/posts', post);// This is relevant for a vendor in  an e-commerce api
-app.use('/api/upload', uploadRouter);
-app.use('/api/seed', seedRouter);
-app.use('/api/products', productRouter);
-app.use('/api/buyers', buyerRouter);
-app.use('/api/orders', orderRouter);
+app.use('/api/v1/auth', auth);
+app.use('/api/v1/users', users);
+app.use('/api/v1/products', products);
+app.use('/api/v1/payments', payments);
+
+app.get('/', (req, res) =>
+  res.status(202).send({ message: 'Welcome to Kika Store' })
+);
+
+app.use('**', (req, res) =>
+  res.status(404).send({ message: 'Route not found' })
+);
 
 app.use(errorHandler);
 

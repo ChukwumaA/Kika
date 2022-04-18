@@ -1,13 +1,19 @@
 const express = require('express');
-const { getUser } = require('controllers/users');
+const { getUsers, 
+        getUser, 
+        deleteUser ,
+        get
+    } = require('controllers/users');
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
-// middleware to Check user is logged in
-const { protect } = require('middleware/auth');
+const { protect, authorize } = require('middleware/auth');
 
 router.use(protect);
+router.use(authorize('admin'));
 
-router.route('/:id').get(getUser);
+router.get('/', getUsers);
+
+router.route('/:id').get(getUser).delete(deleteUser);
 
 module.exports = router;

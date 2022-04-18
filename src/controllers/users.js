@@ -1,12 +1,23 @@
-const ErrorResponse = require('../utils/errorResponse');
-const asyncHandler = require('../middleware/async');
-const User = require('../models/User');
-const Post = require('../models/Post');
+const asyncHandler = require('middleware/async');
+const ErrorResponse = require('utils/errorResponse');
+const User = require('models/User');
 
-// @desc      Get single user information
+// @desc      Get all Users
+// @route     GET /api/v1/users
+// @access    Private (Admin)
+exports.getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({});
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+});
+
+// @desc      Get a User
 // @route     GET /api/v1/users/:id
-// @access    Private
-exports.getUser = asyncHandler(async (req, res, next) => {
+// @access    Private (Admin)
+exports.getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -15,14 +26,34 @@ exports.getUser = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const posts = await Post.find({ postedBy: req.params.id }).populate({
-    path: 'postedBy',
-    select: 'id name',
+  res.status(200).json({
+    success: true,
+    message: 'User retrieved!',
+    data: user,
   });
+});
+
+// @desc      Delete User
+// @route     Delete /api/v1/user/:id
+// @access    Private (Admin)
+exports.deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  if (user.id === req.user.id) {
+    return next(new ErrorResponse(`Cannot delete your personal account`, 405));
+  }
+
+  user.remove();
 
   res.status(200).json({
     success: true,
-    message: 'User information retrieved!',
-    data: { user, posts },
+    message: 'User deleted!',
+    data: {},
   });
 });

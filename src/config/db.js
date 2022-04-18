@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
-const { mongoURI } = require("config")
+const { mongoURI } = require("../config/index")
 
-// config db
+// process db
 const connectDB = async () => {
   try{
   const conn = await mongoose.connect(mongoURI, {

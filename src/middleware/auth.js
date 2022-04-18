@@ -1,9 +1,8 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("./async");
-const ErrorResponse = require("../utils/errorResponse");
-const { jwt_secret } = require("config");
-const User = require("../models/User");
-const Buyer = require("../models/Buyers")
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('./async');
+const ErrorResponse = require('../utils/errorResponse');
+const { jwt_secret } = require('../config/index');
+const User = require('models/User');
 
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
@@ -15,6 +14,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   ) {
     // Set token from Bearer token in header
     token = req.headers.authorization.split(" ")[1];
+    // console.log(token);
   }
   // else if (req.cookies.token) {
   //   // Set token from cookie
@@ -30,8 +30,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, jwt_secret);
 
-    req.user = await User.findById(decoded.user_id);
-    req.buyer = await Buyer.findById(decoded.buyer_id);
+    req.user = await User.findById(decoded.id);
 
     next();
   } catch (err) {
@@ -52,12 +51,4 @@ exports.authorize = (...roles) => {
     }
     next();
   };
-};
-
-exports.isAdmin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    res.status(401).send({ message: 'Invalid Admin Token' });
-  }
 };
