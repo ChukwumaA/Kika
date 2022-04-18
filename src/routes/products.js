@@ -1,15 +1,14 @@
 const express = require('express');
-const Product = require('../models/Product');
-const data = require('../data.js');
-const expressAsyncHandler = require('express-async-handler')
-//const asyncHandler = require('middleware/async');
-
+const User = require('models/User');
+const Product = require('models/Product');
+const data = require('../data');
+const asyncHandler = require('middleware/async');
 
 const {
   getProducts,
   getProduct,
   getProductBySlug,
-  getCategories,
+  // getCategories,
   createProduct,
   searchProducts,
   updateProduct,
@@ -26,52 +25,39 @@ router
   .get(getProducts)
   .post(protect, authorize('vendor'), createProduct);
 
+router.route('/slug/:slug').get(getProductBySlug);
+
+// router.route('/categories').get(getCategories);
+
+router.route('/search').get(searchProducts);
+
+// Populate database with dummy data(products)
+router.route('/seed').get(
+  asyncHandler(async (req, res) => {
+    await Product.deleteMany({});
+    const vendor = await User.findOne({ role: 'vendor' });
+
+    if (vendor) {
+      const products = data.products.map((product) => ({
+        ...product,
+        vendor: vendor.id,
+      }));
+      const createdProducts = await Product.create(products);
+      res.send({ createdProducts });
+    } else {
+      res
+        .status(500)
+        .send({ message: 'No Vendor found. first run /api/v1/auth/seed' });
+    }
+  })
+);
+
 router
   .route('/:id')
   .get(getProduct)
   .patch(protect, authorize('vendor'), updateProduct)
-  .delete(protect, authorize('vendor'), deleteProduct);
+  .delete(protect, authorize('vendor', 'admin'), deleteProduct);
 
-router.get('/slug/:slug', getProductBySlug);
-
-router.get('/categories', getCategories);
-
-router.get('/search', searchProducts);
-
-router.post('/:id/reviews', protect, authorize('user', 'vendor'), createReview);
-
-//Populate database with dummy data(products)
-router.get(
-     '/seed',
-expressAsyncHandler(async (req, res) => {
-     //await Product.remove({});
-     const createdProducts = await Product.insertMany(products);
-     res.send({ createdProducts });
-    })
-  );
-  
-  //@desc      Get products
-  //@route     GET /api/v1/product/vendor
-  //@access    PUBLIC
-  router.get(
-    '/vendor',
-    protect,
-    expressAsyncHandler(async (req, res) => {
-      const { query } = req;
-      const page = query.page || 1;
-      const pageSize = query.pageSize || PAGE_SIZE;
-  
-      const products = await Product.find(data)
-        .skip(pageSize * (page - 1))
-        .limit(pageSize);
-      const countProducts = await Product.countDocuments();
-      res.send({
-        products,
-        countProducts,
-        page,
-        pages: Math.ceil(countProducts / pageSize),
-      });
-    })
-  );
+router.route('/:id/reviews').post(protect, authorize('user'), createReview);
 
 module.exports = router;

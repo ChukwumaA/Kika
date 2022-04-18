@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const ReviewSchema = new mongoose.Schema(
   {
@@ -9,26 +10,25 @@ const ReviewSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-)
+);
 
 const ProductSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String },
+    category: { type: String, enum: ['Male', 'Female'] },
+    newArrival: { type: Boolean, default: false },
+    // images: [String],
+    color: { type: String },
+    grade: { type: String, enum: ['A', 'B'], required: true },
+    size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
     image: { type: String, required: true },
-    images: [String],
-    size: { type: String, required: true },
-    brand: { type: String},
-    category: { type: String, enum: ["Male", "Female"] },
-    newArrival : {type: Boolean, required: false},
-    color: [String],
-    size: {type: String, enum:["S", "M", "L", "XL"]},
-    grade: {type: String, enum: ["A", "B"]},
-    description: {  type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true },
+    brand: { type: String },
     rating: { type: Number, required: true },
     numReviews: { type: Number, required: true },
+    description: { type: String, required: true },
     vendor: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -40,5 +40,11 @@ const ProductSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Create Product slug from the name
+ProductSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
 
 module.exports = mongoose.model('Product', ProductSchema);
