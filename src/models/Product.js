@@ -13,6 +13,7 @@ const ReviewSchema = new mongoose.Schema(
 
 const ProductSchema = new mongoose.Schema(
   {
+    _id: mongoose.Schema.Types.ObjectId,
     name: { type: String, required: true, unique: true },
     slug: { type: String, required: true, unique: true },
     image: { type: String, required: true },
