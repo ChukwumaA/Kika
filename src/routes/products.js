@@ -10,7 +10,7 @@ const {
   getProductBySlug,
   // getCategories,
   createProduct,
-  searchProducts,
+  // searchProducts,
   updateProduct,
   deleteProduct,
   createReview,
@@ -18,18 +18,19 @@ const {
 
 const router = express.Router();
 
+const advancedResults = require('middleware/advancedResults');
 const { protect, authorize } = require('middleware/auth');
 
 router
   .route('/')
-  .get(getProducts)
+  .get(advancedResults(Product), getProducts)
   .post(protect, authorize('vendor'), createProduct);
 
 router.route('/slug/:slug').get(getProductBySlug);
 
 // router.route('/categories').get(getCategories);
 
-router.route('/search').get(searchProducts);
+// router.route('/search').get(searchProducts);
 
 // Populate database with dummy data(products)
 router.route('/seed').get(

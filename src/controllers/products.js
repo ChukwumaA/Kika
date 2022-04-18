@@ -6,12 +6,13 @@ const Product = require('models/Product');
 // @route     GET /api/v1/products
 // @access    Public
 exports.getProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find();
+  // const products = await Product.find();
 
-  res.status(200).json({
-    success: true,
-    data: products,
-  });
+  // res.status(200).json({
+  //   success: true,
+  //   data: products,
+  // });
+  res.status(200).json(res.advancedResults);
 });
 
 // @desc      Get product by id
@@ -58,85 +59,85 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @desc      filter products by search
 // @route     GET /api/v1/products/search
 // @access    Public
-exports.searchProducts = asyncHandler(async (req, res, next) => {
-  const PAGE_SIZE = 3;
-  const { query } = req;
-  const pageSize = query.pageSize || PAGE_SIZE;
-  const page = query.page || 1;
-  const category = query.category || '';
-  const price = query.price || '';
-  const rating = query.rating || '';
-  const order = query.order || '';
-  const searchQuery = query.query || '';
+// exports.searchProducts = asyncHandler(async (req, res, next) => {
+//   const PAGE_SIZE = 3;
+//   const { query } = req;
+//   const pageSize = query.pageSize || PAGE_SIZE;
+//   const page = query.page || 1;
+//   const category = query.category || '';
+//   const price = query.price || '';
+//   const rating = query.rating || '';
+//   const order = query.order || '';
+//   const searchQuery = query.query || '';
 
-  const queryFilter =
-    searchQuery && searchQuery !== 'all'
-      ? {
-          name: {
-            $regex: searchQuery,
-            $options: 'i',
-          },
-        }
-      : {};
+//   const queryFilter =
+//     searchQuery && searchQuery !== 'all'
+//       ? {
+//           name: {
+//             $regex: searchQuery,
+//             $options: 'i',
+//           },
+//         }
+//       : {};
 
-  const categoryFilter = category && category !== 'all' ? { category } : {};
-  const ratingFilter =
-    rating && rating !== 'all'
-      ? {
-          rating: {
-            $gte: Number(rating),
-          },
-        }
-      : {};
+//   const categoryFilter = category && category !== 'all' ? { category } : {};
+//   const ratingFilter =
+//     rating && rating !== 'all'
+//       ? {
+//           rating: {
+//             $gte: Number(rating),
+//           },
+//         }
+//       : {};
 
-  const priceFilter =
-    price && price !== 'all'
-      ? {
-          // 1-50
-          price: {
-            $gte: Number(price.split('-')[0]),
-            $lte: Number(price.split('-')[1]),
-          },
-        }
-      : {};
+//   const priceFilter =
+//     price && price !== 'all'
+//       ? {
+//           // 1-50
+//           price: {
+//             $gte: Number(price.split('-')[0]),
+//             $lte: Number(price.split('-')[1]),
+//           },
+//         }
+//       : {};
 
-  const sortOrder =
-    order === 'featured'
-      ? { featured: -1 }
-      : order === 'lowest'
-      ? { price: 1 }
-      : order === 'highest'
-      ? { price: -1 }
-      : order === 'toprated'
-      ? { rating: -1 }
-      : order === 'newest'
-      ? { createdAt: -1 }
-      : { _id: -1 };
+//   const sortOrder =
+//     order === 'featured'
+//       ? { featured: -1 }
+//       : order === 'lowest'
+//       ? { price: 1 }
+//       : order === 'highest'
+//       ? { price: -1 }
+//       : order === 'toprated'
+//       ? { rating: -1 }
+//       : order === 'newest'
+//       ? { createdAt: -1 }
+//       : { _id: -1 };
 
-  const products = await Product.find({
-    ...queryFilter,
-    ...categoryFilter,
-    ...priceFilter,
-    ...ratingFilter,
-  })
-    .sort(sortOrder)
-    .skip(pageSize * (page - 1))
-    .limit(pageSize);
+//   const products = await Product.find({
+//     ...queryFilter,
+//     ...categoryFilter,
+//     ...priceFilter,
+//     ...ratingFilter,
+//   })
+//     .sort(sortOrder)
+//     .skip(pageSize * (page - 1))
+//     .limit(pageSize);
 
-  const countProducts = await Product.countDocuments({
-    ...queryFilter,
-    ...categoryFilter,
-    ...priceFilter,
-    ...ratingFilter,
-  });
+//   const countProducts = await Product.countDocuments({
+//     ...queryFilter,
+//     ...categoryFilter,
+//     ...priceFilter,
+//     ...ratingFilter,
+//   });
 
-  res.send({
-    products,
-    countProducts,
-    page,
-    pages: Math.ceil(countProducts / pageSize),
-  });
-});
+//   res.send({
+//     products,
+//     countProducts,
+//     page,
+//     pages: Math.ceil(countProducts / pageSize),
+//   });
+// });
 
 // @desc      Create a product
 // @route     Post /api/v1/products
