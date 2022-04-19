@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { jwt_secret, jwt_expiry } = require('config');
 
-const UserSchema = new mongoose.Schema(
+const VendorSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -24,6 +24,35 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a password'],
     },
+    phone: {
+      type: String,
+      required: [true, 'Please add a phone number'],
+    },
+    biz: {
+      type: String,
+      required: [true, 'Please add a business name'],
+    },
+    address: {
+      type: String,
+      required: [true, 'Please add an address'],
+    },
+    city: {
+      type: String,
+      required: [true, 'Please add a city'],
+    },
+    state: {
+      type: String,
+      required: [true, 'Please add a state'],
+    },
+    terms: {
+      type: Boolean,
+      required: [true, 'Please accept terms'],
+    },
+    id_num: {
+      type: Number,
+      required: [true, 'Please add ID number'],
+    },
+    image: { type: String, required: [true, 'Please upload ID'] },
     role: {
       type: String,
       required: true,
@@ -39,7 +68,7 @@ const UserSchema = new mongoose.Schema(
   }
 );
 // Encrypt password using bcrypt before saving to database
-UserSchema.pre('save', async function (next) {
+VendorSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -49,19 +78,19 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function () {
+VendorSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, jwt_secret, {
     expiresIn: jwt_expiry,
   });
 };
 
 // Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function (enteredPassword) {
+VendorSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Generate and hash password token
-UserSchema.methods.getResetPasswordToken = function () {
+VendorSchema.methods.getResetPasswordToken = function () {
   // Generate token
   const resetToken = crypto.randomBytes(20).toString('hex');
 
@@ -77,4 +106,4 @@ UserSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Vendor', VendorSchema);

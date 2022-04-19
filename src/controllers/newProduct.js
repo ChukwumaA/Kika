@@ -163,6 +163,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
     image: image || '/images/p1.jpg',
     price,
     category,
+    brand,
     countInStock,
     description,
     rating: 0,
