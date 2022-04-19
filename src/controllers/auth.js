@@ -64,10 +64,10 @@ exports.logout = asyncHandler(async (req, res, next) => {
 });
 
 // @desc      Get current logged in user
-// @route     POST /api/v1/auth/profile
+// @route     GET /api/v1/auth/profile
 // @access    Private
 exports.getProfile = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
+  // const user = await User.findById(req.user.id); // no need to do this since logged in user is attached to the req object
 
   res.status(200).json({
     success: true,

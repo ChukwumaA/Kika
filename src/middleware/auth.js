@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
-const { jwt_secret } = require('config');
+const { jwt_secret } = require('../config/index');
 const User = require('models/User');
 
 // Protect routes
@@ -11,13 +11,14 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
-  ) {
-    // Set token from Bearer token in header
-    token = req.headers.authorization.split(" ")[1];
-    // console.log(token);
+  ) 
+  {
+  // Set token from Bearer token in header
+  token = req.headers.authorization.split(" ")[1];
+  //console.log(token);
   }
   // else if (req.cookies.token) {
-  //   // Set token from cookie
+  // Set token from cookie
   //   token = req.cookies.token;
   // }
 
@@ -52,3 +53,4 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+

@@ -9,7 +9,7 @@ const {
   logout,
   updateDetails,
   updatePassword,
-  getProfile
+  getProfile,
 } = require('controllers/auth');
 
 const router = express.Router();
@@ -27,8 +27,8 @@ router.put('/updatepassword', protect, updatePassword);
 router.get(
   '/seed',
   asyncHandler(async (req, res) => {
-    // await User.remove({});
-    const createdUsers = await User.insertMany(data.users);
+    // await User.deleteMany({});
+    const createdUsers = await User.create(data.users);
     res.send({ createdUsers });
   })
 );
