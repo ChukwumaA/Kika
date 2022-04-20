@@ -115,7 +115,7 @@ const data = {
       category: 'Female',
       newArrival: true,
       color: 'WHite and Blue',
-      grade: 'a',
+      grade: 'A ',
       size: 'M',
       image: 'https://res.cloudinary.com/cheedie/image/upload/v1650143263/kika/arrival-2_lxtp3n.png',
       price: 3500,
