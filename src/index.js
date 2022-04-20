@@ -2,7 +2,7 @@ require("module-alias/register"); // module-alias
 
 const app = require("./app");
 
-const { port, env } = require("config");
+const { port, env } = require("./config/index");
 
 app.listen(
   port,

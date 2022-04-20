@@ -1,12 +1,13 @@
-import mg from 'mailgun-js';
+const mg = require('mailgun-js');
+const { apiKey, domain } = require('../config');
 
-export const mailgun = () =>
+exports.mailgun = () =>
   mg({
-    apiKey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMIAN,
+    apiKey,
+    domain,
   });
 
-export const payOrderEmailTemplate = (order) => {
+exports.payOrderEmailTemplate = (order) => {
   return `<h1>Thanks for shopping with us</h1>
   <p>
   Hi ${order.user.name},</p>

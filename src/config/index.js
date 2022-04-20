@@ -1,7 +1,7 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 // Load env vars
-dotenv.config({ path: "./src/config/process.env" });
+dotenv.config({ path: './src/config/config.env' });
 
 module.exports = {
   env: process.env.NODE_ENV,
@@ -10,4 +10,10 @@ module.exports = {
   jwt_secret: process.env.JWT_SECRET,
   jwt_expiry: process.env.JWT_EXPIRY,
   jwt_cookie_expiry: process.env.JWT_COOKIE_EXPIRY,
+  apiKey: process.env.MAILGUN_API_KEY,
+  domain: process.env.MAILGUN_DOMIAN,
 };
+
+
+
+
