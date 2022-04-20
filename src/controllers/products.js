@@ -2,6 +2,8 @@ const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
+// const upload = require("../utils/multer");
+//import { multerUploads } from '../utils/multer';
 const Product = require('models/Product');
 
 // @desc      Get all products
@@ -145,34 +147,34 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @route     Post /api/v1/products
 // @access    Private (Vendor)
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  console.log(req.file.path)
+  console.log(req.body)
 
-  try{
-   // Upload image to cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path)
-   let product = new Product({
-    ...req.body,
-    image:result.secure_url,
-    cloudinary_id : result.public_id,
-    rating: 0,
-    numReviews: 0,
-    vendor: req.user.id,
-  });
-  // Save product
-  await product.save();
+  // try{
+  //  // Upload image to cloudinary
+  //   const result = await cloudinary.uploader.upload(req.file.path)
+  //  let product = new Product({
+  //   ...req.body,
+  //   image:result.secure_url,
+  //   cloudinary_id : result.public_id,
+  //   rating: 0,
+  //   numReviews: 0,
+  //   vendor: req.user.id,
+  // });
+  // // Save product
+  // await product.save();
 
-    res.status(201).json({
-      success: true,
-      message: 'Product Created',
-      data: product,
-    });
-  }catch(error){
-    // return next(
-    //   new ErrorResponse(`${error}`, 404)
-    // );
+  //   res.status(201).json({
+  //     success: true,
+  //     message: 'Product Created',
+  //     data: product,
+  //   });
+  // }catch(error){
+  //   // return next(
+  //   //   new ErrorResponse(`${error}`, 404)
+  //   // );
 
-    console.log(error)
-  }
+  //   console.log(error)
+  // }
 
 });
 

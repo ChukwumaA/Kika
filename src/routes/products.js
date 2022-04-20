@@ -21,12 +21,12 @@ const router = express.Router();
 
 const advancedResults = require('middleware/advancedResults');
 const { protect, authorize } = require('middleware/auth');
-const upload = require("../utils/multer");
+const multerUploads = require("../utils/multer");
 
 router
   .route('/')
   .get(advancedResults(Product), getProducts)
-  .post(protect, authorize('vendor'), upload.single("image"), createProduct);
+  .post(protect, authorize('vendor'), multerUploads, createProduct);
 
 router.route('/slug/:slug').get(getProductBySlug);
 
