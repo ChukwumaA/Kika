@@ -3,6 +3,7 @@ const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const { jwt_secret } = require('../config/index');
 const User = require('models/User');
+const Vendor = require('models/Vendor');
 
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
@@ -30,8 +31,16 @@ exports.protect = asyncHandler(async (req, res, next) => {
   try {
     // Verify token
     const decoded = jwt.verify(token, jwt_secret);
-
+  
     req.user = await User.findById(decoded.id);
+
+    if(!req.user){
+      req.user = await Vendor.findById(decoded.id);
+    }
+    if(!req.user){
+      return next(new ErrorResponse("Cannot find user", 401));
+  
+    }
 
     next();
   } catch (err) {
@@ -54,10 +63,3 @@ exports.authorize = (...roles) => {
   };
 };
 
-exports.isAdmin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    res.status(401).send({ message: "Invalid Vendor Token" });
-  }
-};

@@ -32,7 +32,7 @@ const ProductSchema = new mongoose.Schema(
     description: { type: String, required: true },
     vendor: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'Vendor',
       required: true,
     },
     reviews: [ReviewSchema],

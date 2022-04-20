@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('models/User');
+const Vendor = require('models/Vendor');
 const Product = require('models/Product');
 const data = require('../data');
 const asyncHandler = require('middleware/async');
@@ -20,11 +21,12 @@ const router = express.Router();
 
 const advancedResults = require('middleware/advancedResults');
 const { protect, authorize } = require('middleware/auth');
+const upload = require("../utils/multer");
 
 router
   .route('/')
   .get(advancedResults(Product), getProducts)
-  .post(protect, authorize('vendor'), createProduct);
+  .post(protect, authorize('vendor'), upload.single("image"), createProduct);
 
 router.route('/slug/:slug').get(getProductBySlug);
 
