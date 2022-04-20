@@ -12,6 +12,9 @@ module.exports = {
   jwt_cookie_expiry: process.env.JWT_COOKIE_EXPIRY,
   apiKey: process.env.MAILGUN_API_KEY,
   domain: process.env.MAILGUN_DOMIAN,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  cloud_api_key: process.env.CLOUDINARY_API_KEY,
+  cloud_api_secret: process.env.CLOUDINARY_API_SECRET,
 };
 
 

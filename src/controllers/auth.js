@@ -2,6 +2,7 @@ const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
 const sendTokenResponse = require('utils/sendTokenResponse');
 const User = require('models/User');
+const Vendor = require('models/Vendor');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -15,6 +16,19 @@ exports.register = asyncHandler(async (req, res, next) => {
     email,
     password,
     role,
+  });
+
+  sendTokenResponse(user, 200, res);
+});
+// @desc      Register user
+// @route     POST /api/v1/auth/register/vendor
+// @access    Public
+exports.registerVendor = asyncHandler(async (req, res, next) => {
+  //const { name, email, password, role } = req.body;
+
+  // Create user
+  const user = await Vendor.create({
+    ...req.body
   });
 
   sendTokenResponse(user, 200, res);
@@ -33,6 +47,33 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   // Check for user
   const user = await User.findOne({ email }).select('+password');
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid credentials', 401));
+  }
+
+  // Check if password matches
+  const isMatch = await user.matchPassword(password);
+
+  if (!isMatch) {
+    return next(new ErrorResponse('Invalid credentials', 401));
+  }
+
+  sendTokenResponse(user, 200, res);
+});
+// @desc      Login Vendor
+// @route     POST /api/v1/auth/login/vendor
+// @access    Public
+exports.loginVendor = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Validate email & password
+  if (!email || !password) {
+    return next(new ErrorResponse('Please provide email and password', 400));
+  }
+
+  // Check for user
+  const user = await Vendor.findOne({ email }).select('+password');
 
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { jwt_secret, jwt_expiry } = require('config');
+const { jwt_secret, jwt_expiry } = require('../config');
 
 const VendorSchema = new mongoose.Schema(
   {
@@ -28,7 +28,7 @@ const VendorSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a phone number'],
     },
-    biz: {
+    business_name: {
       type: String,
       required: [true, 'Please add a business name'],
     },
@@ -52,12 +52,12 @@ const VendorSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Please add ID number'],
     },
-    image: { type: String, required: [true, 'Please upload ID'] },
+    id_image: { type: String, required: [true, 'Please upload ID'] },
     role: {
       type: String,
       required: true,
       enum: ['user', 'vendor','admin'],
-      default: 'user',
+      default: 'vendor',
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
