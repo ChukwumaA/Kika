@@ -147,7 +147,7 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @route     Post /api/v1/products
 // @access    Private (Vendor)
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  console.log(req.body)
+  console.log(req.file)
 
   // try{
   //  // Upload image to cloudinary

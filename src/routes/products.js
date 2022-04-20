@@ -21,7 +21,7 @@ const router = express.Router();
 
 const advancedResults = require('middleware/advancedResults');
 const { protect, authorize } = require('middleware/auth');
-const multerUploads = require("../utils/multer");
+const {multerUploads, dataUri} = require("../utils/multer");
 
 router
   .route('/')
