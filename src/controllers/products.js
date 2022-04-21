@@ -1,7 +1,7 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
-const cloudinary = require("../utils/cloudinary");
-const {multerUploads, dataUri} = require("../utils/multer");
+const { uploader, cloudinaryConfig } = require('utils/cloudinary')
+const { multerUploads, dataUri } = require('utils/multer');
 // const upload = require('multer')
 // const cloudinary = require('cloudinary')
 // const fs = require('fs');
@@ -153,19 +153,35 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
   console.log(req.file)
   if(req.file){
     console.log(req.body)
-  }
-  try{
+    console.log(req.image)
+    console.log(dataUri)
     const file = dataUri(req).content;
-    return cloudinary.uploader.upload(file).then((result) => {
+    return uploader.upload(file).then((result) => {
     const image = result.url;
-    return res.status(200).json({
+
+      return res.status(200).json({
       messge: 'Your image has been uploded successfully to cloudinary',
       data: {image}
-      })})
+      }).catch((err) => res.status(400).json({
+          messge: 'someting went wrong while processing your request',
+          data: {err}
+        }))
+        
+    })
+ 
   }
-  catch(err){
-    console.log(err)
-  }
+  // try{
+  //   const file = dataUri(req).content;
+  //   return cloudinary.uploader.upload(file).then((result) => {
+  //   const image = result.url;
+  //   return res.status(200).json({
+  //     messge: 'Your image has been uploded successfully to cloudinary',
+  //     data: {image}
+  //     })})
+  // }
+  // catch(err){
+  //   console.log(err)
+  // }
   // try{
   //  // Upload image to cloudinary
   //   const result = await cloudinary.uploader.upload(req.file.path)

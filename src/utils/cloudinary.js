@@ -1,26 +1,14 @@
-const cloudinary = require ("cloudinary");
-const dotenv = require("dotenv");
-dotenv.config();
-cloudinary.config({
-cloud_name: process.env.CLOUDINARY_NAME,
-api_key: process.env.CLOUDINARY_API,
-api_secret: process.env.CLOUDINARY_SECRET
+const { config, uploader } = require('cloudinary')
+const {cloud_name, cloud_api_key, cloud_secret_key} = require('../config')
+//const dotenv = ('../config');
+// dotenv.config();
+const cloudinaryConfig = (req, res, next) => {
+config({
+cloud_name,
+api_key: cloud_api_key,
+api_secret: cloud_secret_key,
 });
-const cloudUpload = cloudinary.v2;
-const cloud = {
-uploadToCloud(req, res, next) {
-const { path } = req.file;
-cloudUpload.uploader.upload(path,
-{
-tags: "profilePicture",
-width: 150,
-height: 150,
-crop: "pad",
-})
-.then((image) => {
-req.image = image;
-return next();
-});
+next();
 }
-};
-module.exports = {cloud, cloudUpload};
+
+module.exports = { cloudinaryConfig, uploader };
