@@ -1,25 +1,12 @@
-// const cloudinary = require("cloudinary").v2;
-// const { cloud_name, cloud_api_key, cloud_api_secret } = require('../config');
-// cloudinary.config({
-//     cloud_name,
-//     api_key: cloud_api_key,
-//     api_secret: cloud_api_secret,
-// }); 
-// module.exports = cloudinary;
-
-//import cloudinary from "cloudinary’;
-const cloudinary = require("cloudinary").v2;
-//import dotenv from "dotenv’;
-//dotenv.config();
-const { cloud_name, cloud_api_key, cloud_api_secret } = require('../config');
+const cloudinary = require ("cloudinary");
+const dotenv = require("dotenv");
+dotenv.config();
 cloudinary.config({
-    cloud_name,
-    api_key: cloud_api_key,
-    api_secret: cloud_api_secret,
-}); 
-const cloudUpload = cloudinary;
-
-
+cloud_name: process.env.CLOUDINARY_NAME,
+api_key: process.env.CLOUDINARY_API,
+api_secret: process.env.CLOUDINARY_SECRET
+});
+const cloudUpload = cloudinary.v2;
 const cloud = {
 uploadToCloud(req, res, next) {
 const { path } = req.file;
@@ -36,4 +23,4 @@ return next();
 });
 }
 };
-module.exports = cloudinary;
+module.exports = {cloud, cloudUpload};
