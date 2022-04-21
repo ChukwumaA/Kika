@@ -52,7 +52,7 @@ const VendorSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Please add ID number'],
     },
-    id_image: { type: String, required: [true, 'Please upload ID'] },
+    id_card: { type: String, required: [true, 'Please upload ID'] },
     role: {
       type: String,
       required: true,

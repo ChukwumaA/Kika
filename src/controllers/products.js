@@ -50,11 +50,14 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
       )
     );
   }
-
+  // if(product){
+  //   const vendor = await Vendor.findById(req.params.id);
+  // }
   res.status(200).json({
     success: true,
     message: 'Product retrieved!',
     data: product,
+   
   });
 });
 
