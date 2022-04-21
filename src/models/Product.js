@@ -21,7 +21,7 @@ const ProductSchema = new mongoose.Schema(
     newArrival: { type: Boolean, default: false },
     // images: [String],
     color: { type: String },
-    grade: { type: String, enum: ['A', 'B'], required: true },
+    grade: { type: String, enum: {values:['A', 'B'] } , required: true },
     size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
     image: { type: String, required: true },
     cloudinary_id: { type: String, required: true },

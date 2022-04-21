@@ -21,7 +21,7 @@ const data = {
   ],
   products: [
     {
-      name: "Briefs",
+      name: "Black-Briefs",
       category: 'Male',
       newArrival: true,
       color: 'Black',
@@ -36,7 +36,7 @@ const data = {
       description: 'high quality shirt',
     },
     {
-      name: 'Shirt',
+      name: 'Blue-Shirt',
       category: 'Male',
       newArrival: true,
       color: 'Blue',
@@ -51,7 +51,7 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Gown',
+      name: 'Red-Gown',
       category: 'Female',
       newArrival: true,
       color: 'Red',
@@ -66,7 +66,7 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Trousers',
+      name: 'Grey-Trousers',
       category: 'Male',
       newArrival: true,
       color: 'Grey',
@@ -81,7 +81,7 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Gown',
+      name: 'Brown-Gown',
       category: 'Female',
       newArrival: true,
       color: 'Nude',
@@ -96,7 +96,7 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Trousers',
+      name: 'Blue-Trousers',
       category: 'Male',
       newArrival: true,
       color: 'Blue',
@@ -111,10 +111,10 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Gown',
+      name: 'Dinner-Gown',
       category: 'Female',
       newArrival: true,
-      color: 'WHite and Blue',
+      color: 'White and Blue',
       grade: 'A ',
       size: 'M',
       image: 'https://res.cloudinary.com/cheedie/image/upload/v1650143263/kika/arrival-2_lxtp3n.png',
@@ -126,7 +126,8 @@ const data = {
       description: 'high quality product',
     },
     {
-      name: 'Gown',
+      //i uploaded this
+      name: 'White-Gown',
       category: 'Female',
       newArrival: true,
       color: 'White',

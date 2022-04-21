@@ -43,7 +43,7 @@ router.route('/slug/:slug').get(getProductBySlug);
 // Populate database with dummy data(products)
 router.route('/seed').get(
   asyncHandler(async (req, res) => {
-    await Product.deleteMany({});
+    //await Product.deleteMany({});
     const vendor = await User.findOne({ role: 'vendor' });
 
     if (vendor) {
