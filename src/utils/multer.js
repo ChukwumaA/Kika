@@ -10,6 +10,8 @@ const dUri = new Datauri();
 * @returns {String} The data url from the string buffer
 */
 const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+
+
 module.exports = { multerUploads, dataUri };
 
 //https://medium.com/@dharmykoya38/image-upload-in-nodejs-using-multer-and-cloudinary-version-2-17924c22fce7

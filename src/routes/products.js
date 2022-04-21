@@ -33,6 +33,7 @@ router
   .post(protect, 
     authorize('vendor'), 
     multerUploads, 
+    cloudinaryConfig,
     //cloud.uploadToCloud,
     createProduct);
 

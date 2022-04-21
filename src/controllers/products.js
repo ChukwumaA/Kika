@@ -1,6 +1,7 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
 const { uploader, cloudinaryConfig } = require('utils/cloudinary')
+const cloudinary = require('cloudinary').v2
 const { multerUploads, dataUri } = require('utils/multer');
 // const upload = require('multer')
 // const cloudinary = require('cloudinary')
@@ -152,63 +153,55 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 exports.createProduct = asyncHandler(async (req, res, next) => {
   console.log(req.file)
   if(req.file){
-    console.log(req.body)
-    console.log(req.image)
-    console.log(dataUri)
     const file = dataUri(req).content;
     return uploader.upload(file).then((result) => {
-    const image = result.url;
+      // console.log(result)
+      // const image = result.url;
+      // console.log("IMAGE......",image)
 
-      return res.status(200).json({
-      messge: 'Your image has been uploded successfully to cloudinary',
-      data: {image}
-      }).catch((err) => res.status(400).json({
-          messge: 'someting went wrong while processing your request',
-          data: {err}
-        }))
+      // return res.status(200).json({
+      // messge: 'Your image has been uploded successfully to cloudinary',
+      // data: {image}
+      // }).catch((err) => res.status(400).json({
+      //     messge: 'someting went wrong while processing your request',
+      //     data: {err}
+      //   }))
+
+      const product = await Product.create({
+        ...req.body,
+        image:result.url,
+        cloudinary_id:result.public,
+        rating: 0,
+        numReviews: 0,
+        vendor: req.user.id,
+      });
+  
+    res.status(201).json({
+      success: true,
+      message: 'Product Created',
+      data: product,
+    });
+ 
         
     })
+
+    // const product = await Product.create({
+    //   ...req.body,
+    //   image:result.url,
+    //   cloudinary_id:result.public,
+    //   rating: 0,
+    //   numReviews: 0,
+    //   vendor: req.user.id,
+    // });
+  
+    // res.status(201).json({
+    //   success: true,
+    //   message: 'Product Created',
+    //   data: product,
+    // });
  
   }
-  // try{
-  //   const file = dataUri(req).content;
-  //   return cloudinary.uploader.upload(file).then((result) => {
-  //   const image = result.url;
-  //   return res.status(200).json({
-  //     messge: 'Your image has been uploded successfully to cloudinary',
-  //     data: {image}
-  //     })})
-  // }
-  // catch(err){
-  //   console.log(err)
-  // }
-  // try{
-  //  // Upload image to cloudinary
-  //   const result = await cloudinary.uploader.upload(req.file.path)
-  //  let product = new Product({
-  //   ...req.body,
-  //   image:result.secure_url,
-  //   cloudinary_id : result.public_id,
-  //   rating: 0,
-  //   numReviews: 0,
-  //   vendor: req.user.id,
-  // });
-  // // Save product
-  // await product.save();
-
-  //   res.status(201).json({
-  //     success: true,
-  //     message: 'Product Created',
-  //     data: product,
-  //   });
-  // }catch(error){
-  //   // return next(
-  //   //   new ErrorResponse(`${error}`, 404)
-  //   // );
-
-  //   console.log(error)
-  // }
-
+  
 });
 
 // @desc      Update a product
