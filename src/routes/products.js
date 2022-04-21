@@ -6,10 +6,8 @@ const data = require('../data');
 const asyncHandler = require('middleware/async');
 const advancedResults = require('middleware/advancedResults');
 const { protect, authorize } = require('middleware/auth');
-// const Upload = require("../utils/multer");
-// const {cloud} = require("../utils/cloudinary")
-const { uploader, cloudinaryConfig } = require('utils/cloudinary')
-const { multerUploads, dataUri } = require('utils/multer');
+const { cloudinaryConfig } = require('middleware/cloudinary')
+const { multerUploads } = require('utils/multer');
 
 const {
   getProducts,
@@ -34,7 +32,6 @@ router
     authorize('vendor'), 
     multerUploads, 
     cloudinaryConfig,
-    //cloud.uploadToCloud,
     createProduct);
 
 router.route('/slug/:slug').get(getProductBySlug);

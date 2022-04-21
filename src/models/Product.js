@@ -14,7 +14,7 @@ const ReviewSchema = new mongoose.Schema(
 
 const ProductSchema = new mongoose.Schema(
   {
-    _id: mongoose.Schema.Types.ObjectId,
+    //_id: mongoose.Schema.Types.ObjectId, //evry new doc will generate its own id automatically no need declaring one here
     name: { type: String, required: true, unique: true },
     slug: { type: String },
     category: { type: String, enum: ['Male', 'Female'] },
@@ -24,6 +24,7 @@ const ProductSchema = new mongoose.Schema(
     grade: { type: String, enum: ['A', 'B'], required: true },
     size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
     image: { type: String, required: true },
+    cloudinary_id: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true },
     brand: { type: String },

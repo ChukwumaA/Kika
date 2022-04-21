@@ -1,13 +1,7 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
-const { uploader, cloudinaryConfig } = require('utils/cloudinary')
-const cloudinary = require('cloudinary').v2
-const { multerUploads, dataUri } = require('utils/multer');
-// const upload = require('multer')
-// const cloudinary = require('cloudinary')
-// const fs = require('fs');
-// const upload = require("../utils/multer");
-//import { multerUploads } from '../utils/multer';
+const { uploader } = require('middleware/cloudinary')
+const { dataUri } = require('utils/multer');
 const Product = require('models/Product');
 
 // @desc      Get all products
@@ -151,55 +145,27 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @route     Post /api/v1/products
 // @access    Private (Vendor)
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  console.log(req.file)
   if(req.file){
     const file = dataUri(req).content;
-    return uploader.upload(file).then((result) => {
-      // console.log(result)
-      // const image = result.url;
-      // console.log("IMAGE......",image)
-
-      // return res.status(200).json({
-      // messge: 'Your image has been uploded successfully to cloudinary',
-      // data: {image}
-      // }).catch((err) => res.status(400).json({
-      //     messge: 'someting went wrong while processing your request',
-      //     data: {err}
-      //   }))
-
-      const product = await Product.create({
-        ...req.body,
-        image:result.url,
-        cloudinary_id:result.public,
-        rating: 0,
-        numReviews: 0,
-        vendor: req.user.id,
-      });
-  
-    res.status(201).json({
-      success: true,
-      message: 'Product Created',
-      data: product,
+    const result =  await uploader.upload(file)
+ 
+    const product = await Product.create({
+      ...req.body,
+      image:result.url,
+      cloudinary_id:result.public_id,
+      rating: 0,
+      numReviews: 0,
+      vendor: req.user.id,
     });
- 
-        
-    })
 
-    // const product = await Product.create({
-    //   ...req.body,
-    //   image:result.url,
-    //   cloudinary_id:result.public,
-    //   rating: 0,
-    //   numReviews: 0,
-    //   vendor: req.user.id,
-    // });
-  
-    // res.status(201).json({
-    //   success: true,
-    //   message: 'Product Created',
-    //   data: product,
-    // });
- 
+    if(product){
+         res.status(201).json({
+            success: true,
+            message: 'Product Created',
+            data: product,
+          });
+    }
+    
   }
   
 });
