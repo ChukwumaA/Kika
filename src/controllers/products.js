@@ -1,6 +1,6 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
-const { uploader } = require('middleware/cloudinary')
+const { cloudinary } = require('middleware/cloudinary')
 const { dataUri } = require('utils/multer');
 const Product = require('models/Product');
 
@@ -145,9 +145,14 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @route     Post /api/v1/products
 // @access    Private (Vendor)
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  if(req.file){
+  if(!req.file){
+    return next(
+      new ErrorResponse(`No file found`, 404)
+    );
+  }
+
     const file = dataUri(req).content;
-    const result =  await uploader.upload(file)
+    const result =  await cloudinary.uploader.upload(file,{folder:"products"})
  
     const product = await Product.create({
       ...req.body,
@@ -166,7 +171,7 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
           });
     }
     
-  }
+  
   
 });
 
