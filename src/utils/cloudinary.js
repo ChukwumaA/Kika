@@ -5,4 +5,4 @@ cloudinary.config({
     api_key: cloud_api_key,
     api_secret: cloud_api_secret,
 }); 
-module.exports = cloudinary;
+module.exports = cloudinary
