@@ -33,7 +33,7 @@ exports.create_delivery_order = asyncHandler(async(req, res, next) => {
             },            
             request: {
                 type: "POST",
-                url: "http://localhost:8080/orders/" + result._id + result.deliveryAddress
+                url: "http://localhost:8080/orders/" + result._id
             }
             
         });
