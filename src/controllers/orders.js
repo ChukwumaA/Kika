@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-
+const asyncHandler = require('middleware/async');
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 
-exports.orders_get_all = (req, res, next) => {
+exports.orders_get_all = asyncHandler(async(req, res, next) => {
   Order.find()
     .select("product quantity _id")
     .populate("product", "name")
@@ -29,9 +29,9 @@ exports.orders_get_all = (req, res, next) => {
         error: err
       });
     });
-};
+});
 
-exports.orders_create_order = (req, res, next) => {
+exports.orders_create_order = asyncHandler(async(req, res, next) => {
   Product.findById(req.body.productId)
     .then(product => {
       if (!product) {
@@ -56,8 +56,7 @@ exports.orders_create_order = (req, res, next) => {
           quantity: result.quantity
         },
         request: {
-          type: "GET",
-          url: "http://localhost:3000/orders/" + result._id
+          type: "POST",
         }
       });
     })
@@ -67,9 +66,9 @@ exports.orders_create_order = (req, res, next) => {
         error: err
       });
     });
-};
+});
 
-exports.orders_get_order = (req, res, next) => {
+exports.orders_get_order = asyncHandler(async(req, res, next) => {
   Order.findById(req.params.orderId)
     .populate("product")
     .exec()
@@ -83,7 +82,6 @@ exports.orders_get_order = (req, res, next) => {
         order: order,
         request: {
           type: "GET",
-          url: "http://localhost:3000/orders"
         }
       });
     })
@@ -92,17 +90,16 @@ exports.orders_get_order = (req, res, next) => {
         error: err
       });
     });
-};
+});
 
-exports.orders_delete_order = (req, res, next) => {
+exports.orders_delete_order = asyncHandler(async(req, res, next) => {
   Order.remove({ _id: req.params.orderId })
     .exec()
     .then(result => {
       res.status(200).json({
         message: "Order deleted",
         request: {
-          type: "POST",
-          url: "http://localhost:3000/orders",
+          type: "DELETE",
           body: { productId: "ID", quantity: "Number" }
         }
       });
@@ -112,5 +109,5 @@ exports.orders_delete_order = (req, res, next) => {
         error: err
       });
     });
-};
+});
 

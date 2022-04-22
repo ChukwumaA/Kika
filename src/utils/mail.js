@@ -50,7 +50,7 @@ exports.payOrderEmailTemplate = (order) => {
   <td colspan="2">Payment Method:</td>
   <td align="right">${order.paymentMethod}</td>
   </tr>
-  </table>
+  </table> 
 
   <h2>Shipping address</h2>
   <p>

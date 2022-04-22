@@ -9,14 +9,14 @@ const {
 
 const router = express.Router();
 
-const { protect } = require('middleware/auth');
+const { protect, authorize} = require('../middleware/auth');
   
 // Handle incoming GET requests to /orders
 
 router.get('/', protect, orders_get_all);
 router.post('/', protect, orders_create_order);
-router.get('/:orderId', protect, orders_get_order);
-router.delete('/:orderId', protect,  orders_delete_order);
+router.get('/:orderId', protect,orders_get_order);
+router.delete('/:orderId', protect, orders_delete_order);
 
 
 module.exports = router;
