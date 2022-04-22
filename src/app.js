@@ -10,7 +10,7 @@ const hpp = require('hpp');
 const cors = require('cors');
 require('colors');
 
-const errorHandler = require('./middleware/error');
+const errorHandler = require('middleware/error');
 const connectDB = require('./config/db');
 
 const { env } = require('./config');
@@ -72,7 +72,6 @@ app.use('/api/v1/products', products);
 app.use('/api/v1/payments', payments);
 app.use('/api/v1/orders', orders);
 app.use('/api/v1/delivery', delivery);
-
 
 app.get('/', (req, res) =>
   res.status(202).send({ message: 'Welcome to Kika Store' })

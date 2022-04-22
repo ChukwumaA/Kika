@@ -1,16 +1,18 @@
 const express = require('express');
-const User = require('models/User');
+const Vendor = require('models/Vendor');
 const Product = require('models/Product');
 const data = require('../data');
 const asyncHandler = require('middleware/async');
+const advancedResults = require('middleware/advancedResults');
+const { protect, authorize } = require('middleware/auth');
+const { cloudinaryConfig } = require('middleware/cloudinary');
+const { multerUploads } = require('utils/multer');
 
 const {
   getProducts,
   getProduct,
   getProductBySlug,
-  // getCategories,
   createProduct,
-  // searchProducts,
   updateProduct,
   deleteProduct,
   createReview,
@@ -18,25 +20,22 @@ const {
 
 const router = express.Router();
 
-const advancedResults = require('middleware/advancedResults');
-const { protect, authorize } = require('middleware/auth');
-
 router
   .route('/')
   .get(advancedResults(Product), getProducts)
-  .post(protect, authorize('vendor'), createProduct);
-
-router.route('/slug/:slug').get(getProductBySlug);
-
-// router.route('/categories').get(getCategories);
-
-// router.route('/search').get(searchProducts);
+  .post(
+    protect,
+    authorize('vendor'),
+    multerUploads,
+    cloudinaryConfig,
+    createProduct
+  );
 
 // Populate database with dummy data(products)
 router.route('/seed').get(
   asyncHandler(async (req, res) => {
-    await Product.deleteMany({});
-    const vendor = await User.findOne({ role: 'vendor' });
+    // await Product.deleteMany({});
+    const vendor = await Vendor.findOne({ role: 'vendor' });
 
     if (vendor) {
       const products = data.products.map((product) => ({
@@ -52,6 +51,8 @@ router.route('/seed').get(
     }
   })
 );
+
+router.route('/slug/:slug').get(getProductBySlug);
 
 router
   .route('/:id')

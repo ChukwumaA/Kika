@@ -1,26 +1,60 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
 const sendTokenResponse = require('utils/sendTokenResponse');
+const { cloudinary } = require('middleware/cloudinary');
+const { dataUri } = require('utils/multer');
+
 const User = require('models/User');
+const Vendor = require('models/Vendor');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
   // Create user
   const user = await User.create({
     name,
     email,
     password,
-    role,
   });
 
   sendTokenResponse(user, 200, res);
 });
 
-// @desc      Login user 
+// @desc      Register vendor
+// @route     POST /api/v1/auth/register/vendor
+// @access    Public
+exports.registerVendor = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  const existingUser = await User.findOne({ email });
+
+  // console.log(`User ${existingUser}`);
+
+  if (existingUser) {
+    return next(new ErrorResponse('Already existing user', 401));
+  }
+
+  if (!req.file) {
+    return next(new ErrorResponse(`No file found`, 404));
+  }
+
+  const file = dataUri(req).content;
+  const result = await cloudinary.uploader.upload(file, { folder: 'ID_CARDS' });
+
+  // Create vendor
+  const vendor = await Vendor.create({
+    ...req.body,
+    id_card: result.secure_url,
+    cloudinary_id: result.public_id,
+  });
+
+  sendTokenResponse(vendor, 200, res);
+});
+
+// @desc      Login user
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
@@ -31,8 +65,10 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Please provide email and password', 400));
   }
 
-  // Check for user
-  const user = await User.findOne({ email }).select('+password');
+  // Check for user in user or vendor db
+  const user =
+    (await User.findOne({ email }).select('+password')) ||
+    (await Vendor.findOne({ email }).select('+password'));
 
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));
@@ -46,21 +82,6 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   sendTokenResponse(user, 200, res);
-});
-
-// @desc      Log user out / clear cookie
-// @route     GET /api/v1/auth/logout
-// @access    Private
-exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-
-  res.status(200).json({
-    success: true,
-    data: {},
-  });
 });
 
 // @desc      Get current logged in user
@@ -80,14 +101,24 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-    name: req.body.name,
-    email: req.body.email,
+    // name: req.body.name,
+    // email: req.body.email,
+    ...req.body,
   };
 
-  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true,
-  });
+  let user;
+
+  if (req.user.role === 'user') {
+    user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true,
+    });
+  } else if (req.user.role === 'vendor') {
+    user = await Vendor.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true,
+    });
+  }
 
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));
@@ -104,7 +135,13 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select('+password');
+  let user;
+
+  if (req.user.role === 'user') {
+    user = await User.findById(req.user.id).select('+password');
+  } else if (req.user.role === 'vendor') {
+    user = await Vendor.findById(req.user.id).select('+password');
+  }
 
   // Check current password
   if (!(await user.matchPassword(req.body.currentPassword))) {
