@@ -10,7 +10,7 @@ const hpp = require('hpp');
 const cors = require('cors');
 require('colors');
 
-const errorHandler = require('./middleware/error');
+const errorHandler = require('middleware/error');
 const connectDB = require('./config/db');
 
 const { env } = require('./config');
@@ -25,7 +25,7 @@ const auth = require('routes/auth');
 const users = require('routes/users');
 const products = require('routes/products');
 const payments = require('routes/payments');
-const orders = require('./routes/orders')
+const orders = require('routes/orders');
 
 // Body parser
 app.use(express.json());
@@ -70,7 +70,6 @@ app.use('/api/v1/users', users);
 app.use('/api/v1/products', products);
 app.use('/api/v1/payments', payments);
 app.use('/api/v1/orders', orders);
-
 
 app.get('/', (req, res) =>
   res.status(202).send({ message: 'Welcome to Kika Store' })

@@ -14,16 +14,16 @@ const ReviewSchema = new mongoose.Schema(
 
 const ProductSchema = new mongoose.Schema(
   {
-    _id: mongoose.Schema.Types.ObjectId,
     name: { type: String, required: true, unique: true },
     slug: { type: String },
     category: { type: String, enum: ['Male', 'Female'] },
     newArrival: { type: Boolean, default: false },
-    // images: [String],
     color: { type: String },
-    grade: { type: String, enum: {values:['A', 'B'] } , required: true },
+    grade: { type: String, enum: { values: ['A', 'B'] }, required: true },
     size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
     image: { type: String, required: true },
+    // images: [String],
+    cloudinary_id: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true },
     brand: { type: String },
@@ -32,7 +32,7 @@ const ProductSchema = new mongoose.Schema(
     description: { type: String, required: true },
     vendor: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'Vendor',
       required: true,
     },
     reviews: [ReviewSchema],
