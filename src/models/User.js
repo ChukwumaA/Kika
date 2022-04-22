@@ -22,11 +22,13 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Please add a password'],
+      minlength: 6,
+      select: false,
     },
     role: {
       type: String,
       required: true,
-      enum: ['user', 'vendor','admin'],
+      enum: ['user', 'admin'],
       default: 'user',
     },
     resetPasswordToken: String,

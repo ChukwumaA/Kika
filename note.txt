@@ -58,8 +58,7 @@ Create Vendor JSON
     "state":"Bayelsa",
     "terms":true,
     "id_num":1,
-    "id_image":"image/jpg",
-    "role":"vendor"
+    "id_card":"image/jpg",
 }
 
 

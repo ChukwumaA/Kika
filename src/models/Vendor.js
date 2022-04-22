@@ -19,17 +19,20 @@ const VendorSchema = new mongoose.Schema(
         'Please add a valid email',
       ],
     },
-
     password: {
       type: String,
       required: [true, 'Please add a password'],
+      minlength: 6,
+      select: false,
     },
     phone: {
       type: String,
+      unique: true,
       required: [true, 'Please add a phone number'],
     },
     business_name: {
       type: String,
+      unique: true,
       required: [true, 'Please add a business name'],
     },
     address: {
@@ -60,7 +63,6 @@ const VendorSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['user', 'vendor','admin'],
       default: 'vendor',
     },
     resetPasswordToken: String,
