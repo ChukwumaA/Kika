@@ -3,6 +3,8 @@ const asyncHandler = require('middleware/async');
 const sendTokenResponse = require('utils/sendTokenResponse');
 const User = require('models/User');
 const Vendor = require('models/Vendor');
+const { cloudinary } = require('middleware/cloudinary')
+const { dataUri } = require('utils/multer');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -25,10 +27,19 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.registerVendor = asyncHandler(async (req, res, next) => {
   //const { name, email, password, role } = req.body;
+  if(!req.file){
+    return next(
+      new ErrorResponse(`No file found`, 404)
+    );
+  }
+  const file = dataUri(req).content;
+  const result =  await cloudinary.uploader.upload(file,{folder:"ID_CARDS"})
 
   // Create user
   const user = await Vendor.create({
-    ...req.body
+    ...req.body,
+    id_card:result.secure_url,
+    cloudinary_id:result.public_id,
   });
 
   sendTokenResponse(user, 200, res);

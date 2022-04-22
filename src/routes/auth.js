@@ -2,6 +2,8 @@ const express = require('express');
 const User = require('models/User');
 const data = require('../data');
 const asyncHandler = require('middleware/async');
+const { cloudinaryConfig } = require('middleware/cloudinary')
+const { multerUploads } = require('utils/multer');
 
 const {
   register,
@@ -19,7 +21,7 @@ const router = express.Router();
 const { protect } = require('middleware/auth');
 
 router.post('/register', register);
-router.post('/register/vendor', registerVendor);
+router.post('/register/vendor', multerUploads, cloudinaryConfig, registerVendor);
 router.post('/login', login);
 router.post('/login/vendor', loginVendor);
 router.get('/logout', logout);

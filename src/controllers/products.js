@@ -1,7 +1,7 @@
 const ErrorResponse = require('utils/errorResponse');
 const asyncHandler = require('middleware/async');
-const cloudinary = require("../utils/cloudinary");
-const upload = require("../utils/multer");
+const { cloudinary } = require('middleware/cloudinary')
+const { dataUri } = require('utils/multer');
 const Product = require('models/Product');
 
 // @desc      Get all products
@@ -50,11 +50,14 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
       )
     );
   }
-
+  // if(product){
+  //   const vendor = await Vendor.findById(req.params.id);
+  // }
   res.status(200).json({
     success: true,
     message: 'Product retrieved!',
     data: product,
+   
   });
 });
 
@@ -145,35 +148,35 @@ exports.getProductBySlug = asyncHandler(async (req, res, next) => {
 // @route     Post /api/v1/products
 // @access    Private (Vendor)
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  console.log(req.file.path)
-
-  try{
-   // Upload image to cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path)
-   let product = new Product({
-    ...req.body,
-    image:result.secure_url,
-    cloudinary_id : result.public_id,
-    rating: 0,
-    numReviews: 0,
-    vendor: req.user.id,
-  });
-  // Save product
-  await product.save();
-
-    res.status(201).json({
-      success: true,
-      message: 'Product Created',
-      data: product,
-    });
-  }catch(error){
-    // return next(
-    //   new ErrorResponse(`${error}`, 404)
-    // );
-
-    console.log(error)
+  if(!req.file){
+    return next(
+      new ErrorResponse(`No file found`, 404)
+    );
   }
 
+    const file = dataUri(req).content;
+    const result =  await cloudinary.uploader.upload(file,{folder:"products"})
+
+ 
+    const product = await Product.create({
+      ...req.body,
+      image:result.secure_url,
+      cloudinary_id:result.public_id,
+      rating: 0,
+      numReviews: 0,
+      vendor: req.user.id,
+    });
+
+    if(product){
+         res.status(201).json({
+            success: true,
+            message: 'Product Created',
+            data: product,
+          });
+    }
+    
+  
+  
 });
 
 // @desc      Update a product

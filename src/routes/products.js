@@ -4,6 +4,10 @@ const Vendor = require('models/Vendor');
 const Product = require('models/Product');
 const data = require('../data');
 const asyncHandler = require('middleware/async');
+const advancedResults = require('middleware/advancedResults');
+const { protect, authorize } = require('middleware/auth');
+const { cloudinaryConfig } = require('middleware/cloudinary')
+const { multerUploads } = require('utils/multer');
 
 const {
   getProducts,
@@ -19,14 +23,16 @@ const {
 
 const router = express.Router();
 
-const advancedResults = require('middleware/advancedResults');
-const { protect, authorize } = require('middleware/auth');
-const upload = require("../utils/multer");
+
 
 router
   .route('/')
   .get(advancedResults(Product), getProducts)
-  .post(protect, authorize('vendor'), upload.single("image"), createProduct);
+  .post(protect, 
+    authorize('vendor'), 
+    multerUploads, 
+    cloudinaryConfig,
+    createProduct);
 
 router.route('/slug/:slug').get(getProductBySlug);
 
@@ -37,7 +43,7 @@ router.route('/slug/:slug').get(getProductBySlug);
 // Populate database with dummy data(products)
 router.route('/seed').get(
   asyncHandler(async (req, res) => {
-    await Product.deleteMany({});
+    //await Product.deleteMany({});
     const vendor = await User.findOne({ role: 'vendor' });
 
     if (vendor) {

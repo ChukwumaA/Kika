@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
-
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 

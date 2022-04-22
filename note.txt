@@ -46,4 +46,28 @@
 - '/seed' route in the auth routes to add dummy user data from data.js
 -
 
+Create Vendor JSON
+{
+    "name":"ifechi",
+    "email":"ifechi@gmail.com",
+    "password":"12345678",
+    "phone":"0987654441",
+    "business_name":"ifechi vendor",
+    "address":"Bayelsa",
+    "city":"Bayelsa",
+    "state":"Bayelsa",
+    "terms":true,
+    "id_num":1,
+    "id_image":"image/jpg",
+    "role":"vendor"
+}
 
+
+
+
+// -- Working code -- //
+   //  return uploader.upload(file).then((result) => {
+  //     console.log(result)
+  //     const image = result.url;
+  //     console.log("IMAGE......",image)
+  //   })
