@@ -26,6 +26,7 @@ const users = require('routes/users');
 const products = require('routes/products');
 const payments = require('routes/payments');
 const orders = require('./routes/orders')
+const delivery = require('./routes/delivery')
 
 // Body parser
 app.use(express.json());
@@ -70,6 +71,7 @@ app.use('/api/v1/users', users);
 app.use('/api/v1/products', products);
 app.use('/api/v1/payments', payments);
 app.use('/api/v1/orders', orders);
+app.use('/api/v1/delivery', delivery);
 
 
 app.get('/', (req, res) =>

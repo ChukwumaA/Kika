@@ -19,7 +19,7 @@ const ProductSchema = new mongoose.Schema(
     slug: { type: String },
     category: { type: String, enum: ['Male', 'Female'] },
     newArrival: { type: Boolean, default: false },
-    // images: [String],
+
     color: { type: String },
     grade: { type: String, enum: {values:['A', 'B'] } , required: true },
     size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
