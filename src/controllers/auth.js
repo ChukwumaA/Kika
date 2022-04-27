@@ -15,7 +15,7 @@ exports.auth = asyncHandler(async (req, res) => {
   const existingEmail = (await User.findOne({ email })) || (await Vendor.findOne({ email }));
   const existingPhone = await Vendor.findOne({ phone });
   const existingBusiness_name = await Vendor.findOne({ business_name });
-  const errorResponse = (key) => res.status(400).send({
+  const errorResponse = (key) => res.status(200).send({
     message:`${key === 'business_name'? "Business Name": key} already exists`, 
     key})
  
