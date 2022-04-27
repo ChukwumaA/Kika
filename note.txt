@@ -70,3 +70,4 @@ Create Vendor JSON
   //     const image = result.url;
   //     console.log("IMAGE......",image)
   //   })
+  //https://medium.com/@dharmykoya38/image-upload-in-nodejs-using-multer-and-cloudinary-version-2-17924c22fce7
