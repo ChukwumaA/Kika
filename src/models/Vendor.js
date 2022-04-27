@@ -13,7 +13,7 @@ const VendorSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, 'Please add an email'],
-      unique: true,
+      unique: [true, 'Email already exist'],
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         'Please add a valid email',
@@ -27,12 +27,12 @@ const VendorSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      unique: true,
+      unique: [true, 'Phone Number already exists'],
       required: [true, 'Please add a phone number'],
     },
     business_name: {
       type: String,
-      unique: true,
+      unique: [true, 'Business name already exists'],
       required: [true, 'Please add a business name'],
     },
     address: {
