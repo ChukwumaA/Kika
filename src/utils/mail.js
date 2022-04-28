@@ -7,12 +7,12 @@ exports.mailgun = () =>
     domain,
   });
 
-exports.payOrderEmailTemplate = (order) => {
+exports.payOrderEmailTemplate = (delivery) => {
   return `<h1>Thanks for shopping with us</h1>
   <p>
-  Hi ${order.user.name},</p>
+  Hi ${delivery.user.name},</p>
   <p>We have finished processing your order.</p>
-  <h2>[Order ${order._id}] (${order.createdAt.toString().substring(0, 10)})</h2>
+  <h2>[Order ${delivery._id}] (${delivery.createdAt.toString().substring(0, 10)})</h2>
   <table>
   <thead>
   <tr>
@@ -21,7 +21,7 @@ exports.payOrderEmailTemplate = (order) => {
   <td><strong align="right">Price</strong></td>
   </thead>
   <tbody>
-  ${order.orderItems
+  ${delivery.orderItems
     .map(
       (item) => `
     <tr>
@@ -36,29 +36,29 @@ exports.payOrderEmailTemplate = (order) => {
   <tfoot>
   <tr>
   <td colspan="2">Items Price:</td>
-  <td align="right"> $${order.itemsPrice.toFixed(2)}</td>
+  <td align="right"> $${delivery.itemsPrice.toFixed(2)}</td>
   </tr>
   <tr>
-  <td colspan="2">Shipping Price:</td>
-  <td align="right"> $${order.shippingPrice.toFixed(2)}</td>
+  <td colspan="2">Delivery Price:</td>
+  <td align="right"> $${delivery.deliveryPrice.toFixed(2)}</td>
   </tr>
   <tr>
   <td colspan="2"><strong>Total Price:</strong></td>
-  <td align="right"><strong> $${order.totalPrice.toFixed(2)}</strong></td>
+  <td align="right"><strong> $${delivery.totalPrice.toFixed(2)}</strong></td>
   </tr>
   <tr>
   <td colspan="2">Payment Method:</td>
-  <td align="right">${order.paymentMethod}</td>
+  <td align="right">${delivery.paymentMethod}</td>
   </tr>
   </table> 
 
-  <h2>Shipping address</h2>
+  <h2>Delivery address</h2>
   <p>
-  ${order.shippingAddress.fullName},<br/>
-  ${order.shippingAddress.address},<br/>
-  ${order.shippingAddress.city},<br/>
-  ${order.shippingAddress.country},<br/>
-  ${order.shippingAddress.postalCode}<br/>
+  ${delivery.deliveryAddress.fullName},<br/>
+  ${delivery.deliveryAddress.address},<br/>
+  ${delivery.deliveryAddress.noticableLandmarks},<br/>
+  ${delivery.deliveryAddress.state},<br/>
+  ${delivery.deliveryAddress.country}<br/>
   </p>
   <hr/>
   <p>
