@@ -4,7 +4,9 @@ An e-commerce api for Kika
 
 A basic feature of an e-commerce service with the following features:
 
-### Users can :
+## abeg look at the cart.md in controllers
+
+### Users can : 
 
 - Register
 - Login 
