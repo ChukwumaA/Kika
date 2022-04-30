@@ -24,9 +24,7 @@ const app = express();
 const auth = require('routes/auth');
 const users = require('routes/users');
 const products = require('routes/products');
-const payments = require('routes/payments');
 const orders = require('./routes/orders')
-const delivery = require('./routes/delivery')
 
 // Body parser
 app.use(express.json());
@@ -69,9 +67,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/users', users);
 app.use('/api/v1/products', products);
-app.use('/api/v1/payments', payments);
 app.use('/api/v1/orders', orders);
-app.use('/api/v1/delivery', delivery);
+
 
 app.get('/', (req, res) =>
   res.status(202).send({ message: 'Welcome to Kika Store' })
