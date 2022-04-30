@@ -1,6 +1,6 @@
-const Cart = require('../models/cart');
-const Product = require('../models/Product');
-const Order = require('../models/Order');
+const Cart = require('models/cart');
+const Product = require('models/Product');
+const Order = require('models/Order');
 const { chargeCard } = require('controllers/payments');
 const asyncHandler = require('middleware/async');
 

@@ -2,8 +2,8 @@
 const mongoose = require("mongoose");
 const asyncHandler = require('middleware/async');
 const {orders_get_order} = require("../controllers/orders");
-const delivery = require("../models/delivery");
-const order = require("../models/Order");
+const delivery = require("models/delivery");
+const order = require("models/Order");
 
 exports.create_delivery_order = asyncHandler(async(req, res, next) => {
     order.findById(req.body.orderId)
