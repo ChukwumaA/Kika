@@ -6,10 +6,6 @@ const { jwt_secret, jwt_expiry } = require('../config');
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Please add full name'],
-    },
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -19,6 +15,11 @@ const UserSchema = new mongoose.Schema(
         'Please add a valid email',
       ],
     },
+    name: {
+      type: String,
+      required: [true, 'Please add full name'],
+    },
+    
     password: {
       type: String,
       required: [true, 'Please add a password'],

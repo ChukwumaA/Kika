@@ -64,23 +64,27 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 
   const file = dataUri(req).content;
   const result = await cloudinary.uploader.upload(file, { folder: 'products' });
-
-  const product = await Product.create({
-    ...req.body,
-    image: result.secure_url,
-    cloudinary_id: result.public_id,
-    rating: 0,
-    numReviews: 0,
-    vendor: req.user.id,
-  });
-
-  if (product) {
-    res.status(201).json({
-      success: true,
-      message: 'Product Created',
-      data: product,
+  try{
+    const product = await Product.create({
+      ...req.body,
+      image: result.secure_url,
+      cloudinary_id: result.public_id,
+      rating: 0,
+      numReviews: 0,
+      vendor: req.user.id,
     });
-  }
+
+    if (product) {
+      res.status(201).json({
+        success: true,
+        message: 'Product Created',
+        data: product,
+      });
+    }}catch(err){
+      return next(
+        new ErrorResponse(err, 404)
+      );
+    }
 });
 
 // @desc      Update a product
