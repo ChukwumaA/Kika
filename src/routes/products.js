@@ -16,6 +16,7 @@ const {
   updateProduct,
   deleteProduct,
   createReview,
+  getProductsByVendor,
 } = require('controllers/products');
 
 const router = express.Router();
@@ -53,6 +54,9 @@ router.route('/seed').get(
 );
 
 router.route('/slug/:slug').get(getProductBySlug);
+router
+  .route('/vendor/:vendorId')
+  .get(protect, authorize('vendor'), getProductsByVendor);
 
 router
   .route('/:id')

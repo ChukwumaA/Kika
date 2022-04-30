@@ -10,6 +10,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add full name'],
     },
+    phone: {
+      type: String,
+      unique: true,
+      required: [true, 'Please add a phone number'],
+    },
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -30,6 +35,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
       enum: ['user', 'admin'],
       default: 'user',
+    },
+    deliveryAddress: {
+      state: { type: String },
+      city: { type: String },
+      street: { type: String },
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

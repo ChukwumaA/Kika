@@ -11,13 +11,11 @@ const Vendor = require('models/Vendor');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password } = req.body;
-
+  // const { name, email, password, phone, deliveryAddress } = req.body;
+  
   // Create user
   const user = await User.create({
-    name,
-    email,
-    password,
+    ...req.body,
   });
 
   sendTokenResponse(user, 200, res);
@@ -101,8 +99,6 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-    // name: req.body.name,
-    // email: req.body.email,
     ...req.body,
   };
 

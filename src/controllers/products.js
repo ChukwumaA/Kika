@@ -30,6 +30,32 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Get product by id
+// @route     GET /api/v1/products/vendor/:vendorId
+// @access    PUBLIC
+exports.getProductsByVendor = asyncHandler(async (req, res, next) => {
+  if (req.user.id !== req.params.vendorId) {
+    return next(new ErrorResponse('Can not get products by this vendor', 404));
+  }
+
+  const products = await Product.find({ vendor: req.params.vendorId });
+
+  if (!products) {
+    return next(
+      new ErrorResponse(
+        `Products not found for vendor with id of ${req.params.id}`,
+        404
+      )
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Vendor Products retrieved!',
+    data: products,
+  });
+});
+
 // @desc      Get products via slug
 // @route     GET /api/v1/products/slug/:slug
 // @access    PUBLIC
