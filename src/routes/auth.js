@@ -7,6 +7,7 @@ const { cloudinaryConfig } = require('middleware/cloudinary');
 const { multerUploads } = require('utils/multer');
 
 const {
+  auth,
   register,
   registerVendor,
   login,
@@ -19,6 +20,7 @@ const router = express.Router();
 
 const { protect } = require('middleware/auth');
 
+router.post('/', auth);
 router.post('/register', register);
 router.post(
   '/register/vendor',

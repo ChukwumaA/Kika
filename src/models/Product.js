@@ -24,7 +24,7 @@ const ProductSchema = new mongoose.Schema(
     image: { type: String, required: true },
     cloudinary_id: { type: String, required: true },
     price: { type: Number, required: true },
-    countInStock: { type: Number, required: true },
+    countInStock: { type: Number, required: true, default: 1},
     brand: { type: String },
     rating: { type: Number, required: true },
     numReviews: { type: Number, required: true },

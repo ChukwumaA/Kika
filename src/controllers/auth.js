@@ -7,6 +7,30 @@ const { dataUri } = require('utils/multer');
 const User = require('models/User');
 const Vendor = require('models/Vendor');
 
+// @desc      Auth Detais
+// @route     POST /api/v1/auth/
+// @access    Public
+exports.auth = asyncHandler(async (req, res) => {
+  const { email, phone, business_name } = req.body;
+  const existingEmail = (await User.findOne({ email })) || (await Vendor.findOne({ email }));
+  const existingPhone = await Vendor.findOne({ phone });
+  const existingBusiness_name = await Vendor.findOne({ business_name });
+  const errorResponse = (key) => res.status(200).send({
+    message:`${key === 'business_name'? "Business Name": key} already exists`, 
+    key})
+ 
+  if (existingEmail) {
+   return errorResponse('email')
+  }else if(existingPhone){
+    return errorResponse('phone')
+  }else if(existingBusiness_name){
+    return errorResponse('business_name')
+  }else{
+    res.status(200).send({success: true})
+  }
+
+});
+
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
