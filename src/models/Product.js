@@ -22,7 +22,6 @@ const ProductSchema = new mongoose.Schema(
     grade: { type: String, enum: { values: ['A', 'B'] }, required: true },
     size: { type: String, enum: ['S', 'M', 'L', 'XL'], required: true },
     image: { type: String, required: true },
-    // images: [String],
     cloudinary_id: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true, default: 1},

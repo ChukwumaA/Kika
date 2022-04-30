@@ -27,7 +27,7 @@ const products = require('routes/products');
 const payments = require('routes/payments');
 const orders = require('./routes/orders')
 const delivery = require('./routes/delivery')
-
+const cart = require('routes/cart');
 // Body parser
 app.use(express.json());
 
@@ -72,6 +72,7 @@ app.use('/api/v1/products', products);
 app.use('/api/v1/payments', payments);
 app.use('/api/v1/orders', orders);
 app.use('/api/v1/delivery', delivery);
+app.use('/api/v1/cart', cart);
 
 app.get('/', (req, res) =>
   res.status(202).send({ message: 'Welcome to Kika Store' })
