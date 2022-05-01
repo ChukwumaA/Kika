@@ -57,8 +57,18 @@ app.use(limiter);
 // Prevent http param pollution
 app.use(hpp());
 
+var whitelist = ['http://localhost:3000', 'https://kika.herokuapp.com']
+var corsOptions = {
+  origin:function (origin, callback){
+    if(whitelist.indexOf(origin) !== -1){
+      callback(null, true)
+    }else{
+      callback(new Error('not allowed by cors'))
+    }
+  }
+}
 // Enable CORS
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Set static folder for uploads and others
 app.use(express.static(path.join(__dirname, 'public')));
