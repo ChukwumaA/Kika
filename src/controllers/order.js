@@ -2,6 +2,7 @@ const asyncHandler = require('middleware/async');
 const Order = require('models/Order');
 const product = require('models/Product');
 const User = require('models/User');
+const vendorOrder = require('models/vendorOrders');
 const Vendor = require('models/Vendor');
 const { mailgun, payOrderEmailTemplate } = require('utils/mail');
 
@@ -65,6 +66,11 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   vendorsID.forEach(async (id) => {
     let vendor = await Vendor.findById(id);
     console.log('vendor is', vendor);
+    const newVendorOrder = new vendorOrder({
+      ...newOrder,
+      user,
+      deliveryAddress,
+    });
     // vendors.push(vendor);
   });
 
@@ -72,6 +78,37 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 //   console.log(vendors);
 
   //   res.status(201).send({ message: 'New Order Created', order });
+});
+
+// @desc      Get product by id
+// @route     GET /api/v1/orders/vendor/:vendorId
+// @access    PUBLIC
+exports.getOrdersByVendor = asyncHandler(async (req, res, next) => {
+  if (req.user.id !== req.params.vendorId) {
+    return next(new ErrorResponse('Can not get order by this vendor', 404));
+  }
+
+  const orders = await Order.find({ vendor: req.params.vendorId }).populate(
+    {
+      path: 'vendor',
+      select: 'name email',
+    }
+  );
+
+  if (!orders) {
+    return next(
+      new ErrorResponse(
+        `Orders not found for vendor with id of ${req.params.id}`,
+        404
+      )
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Vendor orders retrieved!',
+    data: orders,
+  });
 });
 
 // I didnt add the code for {user, orders, dailyOrders, productcategory}
