@@ -20,6 +20,11 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
+    orderId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     deliveryAddress: {
       state: { type: String, required: true },
       city: { type: String, required: true },
@@ -27,7 +32,7 @@ const orderSchema = new mongoose.Schema(
     },
     totalPrice: { type: Number, required: true },
     paymentInfo: {
-      transactionId: { type: Number, trim: true, required: true },
+      transactionId: { type: Number, trim: true, required: true, unique: true },
       currency: { type: String, required: true },
       gateway: {
         type: String,
