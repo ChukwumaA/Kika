@@ -19,20 +19,30 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
-    totalPrice: { type: Number, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
     deliveryAddress: {
       state: { type: String, required: true },
       city: { type: String, required: true },
       street: { type: String, required: true },
     },
-    paymentMethod: { type: String, required: true },
-    paymentResult: {
-      id: String,
+    totalPrice: { type: Number, required: true },
+    paymentInfo: {
+      transactionId: { type: Number, trim: true, required: true },
+      currency: { type: String, required: true },
+      gateway: {
+        type: String,
+        required: [true, 'Payment Gateway should be included'],
+        enum: ['flutterwave'], // more can be added later
+        default: 'flutterwave',
+      },
       status: String,
-      update_time: String,
     },
-    // isPaid: { type: Boolean, default: false },
+    status: {
+      type: String,
+      required: true,
+      enum: ['created', 'in-progress', 'delivered'],
+      default: 'created',
+    },
   },
   {
     timestamps: true,

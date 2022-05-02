@@ -17,8 +17,6 @@ exports.getUserOrders = asyncHandler(async (req, res, next) => {
 });
 
 exports.createOrder = asyncHandler(async (req, res, next) => {
-  //   const { orderItems, deliveryPrice, taxPrice, totalPrice } = req.body;
-
   const { id: user, deliveryAddress } = req.user;
 
   const newOrder = new Order({
@@ -29,7 +27,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
   console.log(newOrder);
 
-  //   const order = await newOrder.save();
+  const order = await newOrder.save();
 
   //   mailgun()
   //   .messages()
@@ -50,28 +48,20 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   //   );
 
   //   getting each product vendor email
-  //   const vendorsID = newOrder.orderItems.map(async (item) => {
-  //     let result = await Vendor.findById(item.vendor);
+  // const vendorsID = newOrder.orderItems.map((item) => item.vendor);
+  // let vendors = [];
 
-  //     if (result) {
-  //       return result;
-  //     }
-  //   });
-  const vendorsID = newOrder.orderItems.map((item) => item.vendor);
-  let vendors = [];
+  // console.log(vendorsID);
 
-  console.log(vendorsID);
+  // vendorsID.forEach(async (id) => {
+  //   let vendor = await Vendor.findById(id);
+  //   console.log('vendor is', vendor);
+  //   // vendors.push(vendor);
+  // });
 
-  vendorsID.forEach(async (id) => {
-    let vendor = await Vendor.findById(id);
-    console.log('vendor is', vendor);
-    // vendors.push(vendor);
-  });
+  //   console.log(vendors);
 
-
-//   console.log(vendors);
-
-  //   res.status(201).send({ message: 'New Order Created', order });
+  res.status(201).send({ message: 'New Order Created', order });
 });
 
 // I didnt add the code for {user, orders, dailyOrders, productcategory}

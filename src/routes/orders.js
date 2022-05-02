@@ -5,12 +5,12 @@ const {
   getUserOrders,
   userOrders,
   findOrderById,
-  makeDelivery,
-  makePayment,
+  // makeDelivery,
+  // makePayment,
   deleteOrder,
 } = require('../controllers/order');
 
-const { chargeCard, charge_ng_acct } = require('controllers/payments');
+// const { chargeCard, charge_ng_acct } = require('controllers/payments');
 
 const router = express.Router();
 
@@ -21,11 +21,11 @@ router.post('/', protect, authorize('user'), createOrder);
 
 router.get('/getuserorder', userOrders);
 router.get('/:id', findOrderById);
-router.put('/:id/deliver', makeDelivery);
-router.put('/:id/pay', makePayment);
+// router.put('/:id/deliver', makeDelivery);
+// router.put('/:id/pay', makePayment);
 
-router.post('/payment/payWithCard', chargeCard);
-router.post('/payment/payWithBankTransfer', charge_ng_acct);
+// router.post('/payment/payWithCard', chargeCard);
+// router.post('/payment/payWithBankTransfer', charge_ng_acct);
 
 router.delete('/deleteorder', deleteOrder);
 
