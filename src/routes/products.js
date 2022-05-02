@@ -16,13 +16,20 @@ const {
   updateProduct,
   deleteProduct,
   createReview,
+  getProductsByVendor,
 } = require('controllers/products');
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(advancedResults(Product), getProducts)
+  .get(
+    advancedResults(Product, {
+      path: 'vendor',
+      select: 'name email',
+    }),
+    getProducts
+  )
   .post(
     protect,
     authorize('vendor'),
@@ -53,6 +60,9 @@ router.route('/seed').get(
 );
 
 router.route('/slug/:slug').get(getProductBySlug);
+router
+  .route('/vendor/:vendorId')
+  .get(protect, authorize('vendor'), getProductsByVendor);
 
 router
   .route('/:id')

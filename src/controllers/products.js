@@ -15,7 +15,10 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/products/:id
 // @access    PUBLIC
 exports.getProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate({
+    path: 'vendor',
+    select: 'name email',
+  });
 
   if (!product) {
     return next(
@@ -30,11 +33,45 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Get product by id
+// @route     GET /api/v1/products/vendor/:vendorId
+// @access    PUBLIC
+exports.getProductsByVendor = asyncHandler(async (req, res, next) => {
+  if (req.user.id !== req.params.vendorId) {
+    return next(new ErrorResponse('Can not get products by this vendor', 404));
+  }
+
+  const products = await Product.find({ vendor: req.params.vendorId }).populate(
+    {
+      path: 'vendor',
+      select: 'name email',
+    }
+  );
+
+  if (!products) {
+    return next(
+      new ErrorResponse(
+        `Products not found for vendor with id of ${req.params.id}`,
+        404
+      )
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Vendor Products retrieved!',
+    data: products,
+  });
+});
+
 // @desc      Get products via slug
 // @route     GET /api/v1/products/slug/:slug
 // @access    PUBLIC
 exports.getProductBySlug = asyncHandler(async (req, res, next) => {
-  const product = await Product.findOne({ slug: req.params.slug });
+  const product = await Product.findOne({ slug: req.params.slug }).populate({
+    path: 'vendor',
+    select: 'name email',
+  });
 
   if (!product) {
     return next(
@@ -64,22 +101,25 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 
   const file = dataUri(req).content;
   const result = await cloudinary.uploader.upload(file, { folder: 'products' });
-
-  const product = await Product.create({
-    ...req.body,
-    image: result.secure_url,
-    cloudinary_id: result.public_id,
-    rating: 0,
-    numReviews: 0,
-    vendor: req.user.id,
-  });
-
-  if (product) {
-    res.status(201).json({
-      success: true,
-      message: 'Product Created',
-      data: product,
+  try {
+    const product = await Product.create({
+      ...req.body,
+      image: result.secure_url,
+      cloudinary_id: result.public_id,
+      rating: 0,
+      numReviews: 0,
+      vendor: req.user.id,
     });
+
+    if (product) {
+      res.status(201).json({
+        success: true,
+        message: 'Product Created',
+        data: product,
+      });
+    }
+  } catch (err) {
+    return next(new ErrorResponse(err, 404));
   }
 });
 

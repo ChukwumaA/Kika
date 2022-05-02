@@ -15,7 +15,7 @@ exports.auth = asyncHandler(async (req, res) => {
   const existingEmail = (await User.findOne({ email })) || (await Vendor.findOne({ email }));
   const existingPhone = await Vendor.findOne({ phone });
   const existingBusiness_name = await Vendor.findOne({ business_name });
-  const errorResponse = (key) => res.status(400).send({
+  const errorResponse = (key) => res.status(200).send({
     message:`${key === 'business_name'? "Business Name": key} already exists`, 
     key})
  
@@ -35,13 +35,11 @@ exports.auth = asyncHandler(async (req, res) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password } = req.body;
-
+  // const { name, email, password, phone, deliveryAddress } = req.body;
+  
   // Create user
   const user = await User.create({
-    name,
-    email,
-    password,
+    ...req.body,
   });
 
   sendTokenResponse(user, 200, res);
@@ -125,8 +123,6 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-    // name: req.body.name,
-    // email: req.body.email,
     ...req.body,
   };
 

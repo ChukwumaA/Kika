@@ -10,6 +10,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add full name'],
     },
+    phone: {
+      type: String,
+      unique: true,
+      required: [true, 'Please add a phone number'],
+    },
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -19,6 +24,11 @@ const UserSchema = new mongoose.Schema(
         'Please add a valid email',
       ],
     },
+    name: {
+      type: String,
+      required: [true, 'Please add full name'],
+    },
+    
     password: {
       type: String,
       required: [true, 'Please add a password'],
@@ -31,6 +41,11 @@ const UserSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
+    deliveryAddress: {
+      state: { type: String },
+      city: { type: String },
+      street: { type: String },
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
@@ -38,6 +53,7 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 // Encrypt password using bcrypt before saving to database
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
