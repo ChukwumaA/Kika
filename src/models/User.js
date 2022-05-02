@@ -53,6 +53,7 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 // Encrypt password using bcrypt before saving to database
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
