@@ -23,7 +23,13 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(advancedResults(Product), getProducts)
+  .get(
+    advancedResults(Product, {
+      path: 'vendor',
+      select: 'name email',
+    }),
+    getProducts
+  )
   .post(
     protect,
     authorize('vendor'),

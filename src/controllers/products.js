@@ -15,7 +15,10 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/products/:id
 // @access    PUBLIC
 exports.getProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate({
+    path: 'vendor',
+    select: 'name email',
+  });
 
   if (!product) {
     return next(
@@ -38,7 +41,12 @@ exports.getProductsByVendor = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Can not get products by this vendor', 404));
   }
 
-  const products = await Product.find({ vendor: req.params.vendorId });
+  const products = await Product.find({ vendor: req.params.vendorId }).populate(
+    {
+      path: 'vendor',
+      select: 'name email',
+    }
+  );
 
   if (!products) {
     return next(
@@ -60,7 +68,10 @@ exports.getProductsByVendor = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/products/slug/:slug
 // @access    PUBLIC
 exports.getProductBySlug = asyncHandler(async (req, res, next) => {
-  const product = await Product.findOne({ slug: req.params.slug });
+  const product = await Product.findOne({ slug: req.params.slug }).populate({
+    path: 'vendor',
+    select: 'name email',
+  });
 
   if (!product) {
     return next(
@@ -90,7 +101,7 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 
   const file = dataUri(req).content;
   const result = await cloudinary.uploader.upload(file, { folder: 'products' });
-  try{
+  try {
     const product = await Product.create({
       ...req.body,
       image: result.secure_url,
@@ -106,11 +117,10 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
         message: 'Product Created',
         data: product,
       });
-    }}catch(err){
-      return next(
-        new ErrorResponse(err, 404)
-      );
     }
+  } catch (err) {
+    return next(new ErrorResponse(err, 404));
+  }
 });
 
 // @desc      Update a product
