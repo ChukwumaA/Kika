@@ -17,13 +17,20 @@ const {
   deleteProduct,
   createReview,
   getProductsByVendor,
+  getVendorProducts,
 } = require('controllers/products');
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(advancedResults(Product), getProducts)
+  .get(
+    advancedResults(Product, {
+      path: 'vendor',
+      select: 'name email',
+    }),
+    getProducts
+  )
   .post(
     protect,
     authorize('vendor'),
@@ -53,10 +60,13 @@ router.route('/seed').get(
   })
 );
 
+router.route('/mine').get(protect, authorize('vendor'), getVendorProducts);
+
 router.route('/slug/:slug').get(getProductBySlug);
+
 router
   .route('/vendor/:vendorId')
-  .get(protect, authorize('vendor'), getProductsByVendor);
+  .get(protect, authorize('admin'), getProductsByVendor);
 
 router
   .route('/:id')
