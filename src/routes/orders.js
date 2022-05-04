@@ -7,32 +7,23 @@ const {
   getAllOrders,
   getOrder,
   deleteOrder,
-  // userOrders,
-} = require('../controllers/order');
+  getOrdersByUser,
+  getUserOrders,
+} = require('../controllers/orders');
 
 const router = express.Router();
 
 const { protect, authorize } = require('../middleware/auth');
 
-router.get(
-  '/',
-  protect,
-  authorize('admin'),
-  advancedResults(Order),
-  getAllOrders
-);
-router.post('/', protect, authorize('user'), createOrder);
+router
+  .route('/')
+  .get(protect, authorize('admin'), advancedResults(Order), getAllOrders)
+  .post(protect, authorize('user'), createOrder);
 
-router.get('/:id', getOrder);
+router.route('/mine').get(protect, authorize('user'), getUserOrders);
 
-router.delete('/deleteorder', deleteOrder);
+router.route('/user/:userId').get(protect, authorize('admin'), getOrdersByUser);
 
-// router.get('/getuserorder', userOrders);
+router.route('/:id').get(getOrder).delete(authorize('admin'), deleteOrder);
 
 module.exports = router;
-
-// router.get('/getallOrders', protect, authorize, orders_get_all);
-// router.post('/createOrder', protect, orders_create_order);
-// router.get('/myOrders', protect, my_Orders);
-// router.get('/:orderId', protect,orders_get_order);
-// router.delete('/:orderId', protect, orders_delete_order);

@@ -106,13 +106,42 @@ exports.deleteOrder = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.userOrders = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find({ user: req.body.user /*._id*/ });
-  res.send(orders);
+exports.getOrdersByUser = asyncHandler(async (req, res, next) => {
+  // if (req.user.id !== req.params.userId) {
+  //   return next(new ErrorResponse('Can not get orders for this user', 404));
+  // }
 
-  //This is a get request
-  console.log(err);
-  res.status(500).json({
-    error: err,
+  const orders = await Order.find({ user: req.params.userId });
+
+  if (!orders) {
+    return next(
+      new ErrorResponse(
+        `Orders not found for user with id of ${req.params.userId}`
+      ),
+      404
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'User Orders retrieved!',
+    data: orders,
+  });
+});
+
+exports.getUserOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user.id });
+
+  if (!orders) {
+    return next(
+      new ErrorResponse(`Orders not found for user with id of ${req.user.id}`),
+      404
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'User Orders retrieved!',
+    data: orders,
   });
 });
