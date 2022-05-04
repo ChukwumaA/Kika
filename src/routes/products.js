@@ -17,6 +17,7 @@ const {
   deleteProduct,
   createReview,
   getProductsByVendor,
+  getVendorProducts,
 } = require('controllers/products');
 
 const router = express.Router();
@@ -59,10 +60,13 @@ router.route('/seed').get(
   })
 );
 
+router.route('/mine').get(protect, authorize('vendor'), getVendorProducts);
+
 router.route('/slug/:slug').get(getProductBySlug);
+
 router
   .route('/vendor/:vendorId')
-  .get(protect, authorize('vendor'), getProductsByVendor);
+  .get(protect, authorize('admin'), getProductsByVendor);
 
 router
   .route('/:id')
