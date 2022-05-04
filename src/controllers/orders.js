@@ -8,6 +8,7 @@ const uid = new ShortUniqueId({ length: 10 });
 const product = require('models/Product');
 
 const User = require('models/User');
+const vendorOrder = require('models/vendorOrders');
 const Vendor = require('models/Vendor');
 const { mailgun, payOrderEmailTemplate } = require('utils/mail');
 
