@@ -26,7 +26,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     ...req.body,
     orderId:`KIKA-${orderId}`,
     user,
-    deliveryAddress:req.body.deliveryAddress,
+    deliveryAddress
   });
  
   if(newOrder){
@@ -127,7 +127,7 @@ exports.getVendorOrders = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Vendor orders retrieved!',
-    data: {...newOrder}
+    data: [newOrder]
      
   });
 })
