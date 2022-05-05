@@ -110,10 +110,8 @@ exports.getVendorOrders = asyncHandler(async (req, res, next) => {
     path: 'User',
     select: 'name email',
   });
-   console.log("Order", order[0])
-  console.log("USER", order[0].user)
   const user = await User.findById(order[0].user)
-//console.log(user)
+
   if (!order) {
     return next(
       new ErrorResponse(
@@ -125,7 +123,7 @@ exports.getVendorOrders = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Vendor orders retrieved!',
-    data: {...order,user:user.name}
+    data: {order,buyer:user.name}
      
   });
 })
