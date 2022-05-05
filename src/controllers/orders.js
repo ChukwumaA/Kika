@@ -1,12 +1,9 @@
 const asyncHandler = require('middleware/async');
 const Order = require('models/Order');
 const ErrorResponse = require('utils/errorResponse');
-
 const ShortUniqueId = require('short-unique-id');
 const uid = new ShortUniqueId({ length: 10 });
-
 const product = require('models/Product');
-
 const User = require('models/User');
 const vendorOrder = require('models/vendorOrders');
 const Vendor = require('models/Vendor');
@@ -21,19 +18,47 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   const orderId = uid();
   // const newOrder = new Order({
   //   ...req.body,
+  //   orderId: `KIKA-${orderId}`,
   //   user,
-  //   deliveryAddress,
+  //   //deliveryAddress,
   // });
-
-  // console.log(newOrder);
-
-  const order = await Order.create({
+  const newOrder = await Order.create({
     ...req.body,
-    orderId,
+    orderId:`KIKA-${orderId}`,
     user,
-    deliveryAddress,
+    deliveryAddress:req.body.deliveryAddress,
+  });
+ 
+  if(newOrder){
+  let orders = newOrder.orderItems
+  //   getting each product vendor email
+  const vendorsID = newOrder.orderItems.map((item) => item.vendor)
+  
+  const vendors = vendorsID.filter((id,index)=>{
+    return vendorsID.indexOf(id) === index
   });
 
+  vendors.forEach(async (id) => {
+    let vendorItems = orders.filter((order)=>{
+      return `${order.vendor}`.includes(id)
+    })
+    let totalPrice = vendorItems
+    .reduce((prev,current)=>{
+     return prev + (current.price * current.quantity)
+    },0)
+
+    const newVendorOrder = await vendorOrder.create({
+      orderId: newOrder.orderId,
+      products: [...vendorItems],
+      vendor: id,
+      totalPrice,
+      user: newOrder.user,
+      deliveryAddress: newOrder.deliveryAddress,
+    });
+    
+    console.log('vendor own order is', newVendorOrder);
+  });
+}
   //   mailgun()
   //   .messages()
   //   .send(
@@ -52,21 +77,13 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   //     }
   //   );
 
-  //   getting each product vendor email
-  // const vendorsID = newOrder.orderItems.map((item) => item.vendor);
-  // let vendors = [];
+  
 
   // console.log(vendorsID);
 
-  // vendorsID.forEach(async (id) => {
-  //   let vendor = await Vendor.findById(id);
-  //   console.log('vendor is', vendor);
-  //   // vendors.push(vendor);
-  // });
 
-  //   console.log(vendors);
 
-  res.status(201).send({ message: 'New Order Created', order });
+  res.status(201).send({ message: 'New Order Created', newOrder });
 });
 
 exports.getOrder = asyncHandler(async (req, res, next) => {
@@ -84,6 +101,34 @@ exports.getOrder = asyncHandler(async (req, res, next) => {
     data: order,
   });
 });
+
+// @desc      Get vendor products
+// @route     GET /api/v1/orders/myorders
+// @access    Private(vendor)
+exports.getVendorOrders = asyncHandler(async (req, res, next) => {
+  const order = await vendorOrder.find({ vendor: req.user._id }).populate({
+    path: 'User',
+    select: 'name email',
+  });
+   console.log("Order", order[0])
+  console.log("USER", order[0].user)
+  const user = await User.findById(order[0].user)
+//console.log(user)
+  if (!order) {
+    return next(
+      new ErrorResponse(
+        `Products not found for vendor with id of ${req.user.id}`,
+        404
+      )
+    );
+  } 
+  res.status(200).json({
+    success: true,
+    message: 'Vendor orders retrieved!',
+    data: {...order,user:user.name}
+     
+  });
+})
 
 exports.deleteOrder = asyncHandler(async (req, res, next) => {
   const order = await Order.findById(req.params.id);

@@ -8,8 +8,10 @@ const {
   getOrder,
   deleteOrder,
   getOrdersByUser,
+  getVendorOrders,
   getUserOrders,
 } = require('../controllers/orders');
+
 
 const router = express.Router();
 
@@ -21,6 +23,7 @@ router
   .post(protect, authorize('user'), createOrder);
 
 router.route('/mine').get(protect, authorize('user'), getUserOrders);
+router.route('/myorders').get(protect, authorize('vendor'), getVendorOrders);
 
 router.route('/user/:userId').get(protect, authorize('admin'), getOrdersByUser);
 
