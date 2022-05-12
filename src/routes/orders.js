@@ -1,38 +1,32 @@
 const express = require('express');
+const advancedResults = require('middleware/advancedResults');
+const Order = require('models/Order');
 
 const {
   createOrder,
-  getUserOrders,
-  userOrders,
-  findOrderById,
-  makeDelivery,
-  makePayment,
+  getAllOrders,
+  getOrder,
   deleteOrder,
-} = require('../controllers/order');
+  getOrdersByUser,
+  getVendorOrders,
+  getUserOrders,
+} = require('../controllers/orders');
 
-const { chargeCard, charge_ng_acct } = require('controllers/payments');
 
 const router = express.Router();
 
 const { protect, authorize } = require('../middleware/auth');
 
-router.get('/', protect, authorize('admin'), getUserOrders);
-router.post('/', protect, authorize('user'), createOrder);
+router
+  .route('/')
+  .get(protect, authorize('admin'), advancedResults(Order), getAllOrders)
+  .post(protect, authorize('user'), createOrder);
 
-router.get('/getuserorder', userOrders);
-router.get('/:id', findOrderById);
-router.put('/:id/deliver', makeDelivery);
-router.put('/:id/pay', makePayment);
+router.route('/mine').get(protect, authorize('user'), getUserOrders);
+router.route('/myorders').get(protect, authorize('vendor'), getVendorOrders);
 
-router.post('/payment/payWithCard', chargeCard);
-router.post('/payment/payWithBankTransfer', charge_ng_acct);
+router.route('/user/:userId').get(protect, authorize('admin'), getOrdersByUser);
 
-router.delete('/deleteorder', deleteOrder);
+router.route('/:id').get(getOrder).delete(authorize('admin'), deleteOrder);
 
 module.exports = router;
-
-// router.get('/getallOrders', protect, authorize, orders_get_all);
-// router.post('/createOrder', protect, orders_create_order);
-// router.get('/myOrders', protect, my_Orders);
-// router.get('/:orderId', protect,orders_get_order);
-// router.delete('/:orderId', protect, orders_delete_order);
