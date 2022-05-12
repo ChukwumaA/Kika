@@ -77,7 +77,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
 //   console.log(vendors);
 
-  //   res.status(201).send({ message: 'New Order Created', order });
+  res.status(201).send({ message: 'New Order Created', order });
 });
 
 // @desc      Get product by id
