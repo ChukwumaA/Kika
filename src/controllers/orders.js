@@ -22,14 +22,26 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   //   deliveryAddress,
   // });
 
+  //console.log("USER   ",req.user);
   // console.log(newOrder);
+/* Working code */
+  // const order = await Order.create({
+  //   ...req.body,
+  //   orderId:`KIKA-${orderId}`,
+  //   user,
+  //   deliveryAddress,
+  // });
+  /* Working code */
 
-  const order = await Order.create({
+   /* My code */
+  const order = new Order({
     ...req.body,
-    orderId,
+    orderId:`KIKA-${orderId}`,
     user,
     deliveryAddress,
   });
+  /* My code */
+  //console.log("ORDER:   ", order )
 
   //   mailgun()
   //   .messages()
@@ -49,21 +61,55 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   //     }
   //   );
 
-  //   getting each product vendor email
-  // const vendorsID = newOrder.orderItems.map((item) => item.vendor);
-  // let vendors = [];
+  //getting each product vendor ID
+  const vendorsID = order.orderItems.map((item) => item.vendor);
+  const vendors = vendorsID.filter((id,index)=> vendorsID.indexOf(id)===index);
 
-  // console.log(vendorsID);
+  //console.log("IDS",vendorsID); 
+  console.log("Vendors",vendors); 
+  
+  const orderItems = order.orderItems;
 
-  // vendorsID.forEach(async (id) => {
-  //   let vendor = await Vendor.findById(id);
-  //   console.log('vendor is', vendor);
+  // const check = orderItems.filter(item=>item['vendor'] == '626068e2ac0f9c26303816b1')
+  for(let vendor of vendors){
+    let vendorItems = orderItems.filter(item=>{
+      console.log("Match:", item['vendor'] === vendor)
+      console.log("Type Of vendor from order", typeof(`${vendor}`))
+      console.log("Type Of id in orderitems", typeof(item['vendor']))
+
+      if(`${item['vendor']}` == `${vendor}`)return true
+      else return false
+    });
+    console.log("VendorItem:   ", vendorItems)
+  }
+  // vendors.forEach(async (id) => {
+  //   // let vendor = await Vendor.findById(id);
+  //   // console.log('vendor is', vendor);
+  //   let vendorItems = orderItems.filter(item=>{
+  //     console.log("Vendor:", item['vendor'])
+  //     console.log("ID:", id)
+  //     if(item['vendor'] == id){
+  //       console.log("Vendor:   ", item['vendor'])
+  //       return true
+  //     }
+  //     else {return false}
+  //   });
+  // //  console.log("Vendor Items:   ", vendorItems )
   //   // vendors.push(vendor);
+  //   // const vendororder = new vendorOrder({
+  //   //   vendorItems,
+  //   //   orderId:`KIKA-${orderId}`,
+  //   //   user,
+  //   //   deliveryAddress,
+  //   // });
+  //   /* My code */
+  //   //console.log("ORDER:   ", vendororder )
   // });
+  // const vendorOrderss = vendors.map(vendor=> orderItems.vendor == vendor)
 
-  //   console.log(vendors);
+  //    console.log(vendorOrderss);
 
-  res.status(201).send({ message: 'New Order Created', order });
+  //res.status(201).send({ message: 'New Order Created', order });
 });
 
 
