@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 
-const vendorOrderSchema = new mongoose.Schema(
+const venderOrderSchema = new mongoose.Schema(
   {
-    orderId: { type: String, required: true },
-    products: [
-      {
-        name: { type: String, required: true },
-        product: { type: String, required: true },
-        price: { type: Number, required: true },
-        quantity: { type: Number, required: true },
+    name: { type: String, required: true },
+    quantity: { type: Number, required: true },
+
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
       },
-    ],
 
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
@@ -25,6 +24,13 @@ const vendorOrderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       street: { type: String, required: true },
     },
+    paymentMethod: { type: String, required: true },
+    paymentResult: {
+      id: String,
+      status: String,
+      update_time: String,
+    },
+    // isPaid: { type: Boolean, default: false },
   },
   {
     timestamps: true,
