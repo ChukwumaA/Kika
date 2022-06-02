@@ -18,47 +18,19 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   const orderId = uid();
   // const newOrder = new Order({
   //   ...req.body,
-  //   orderId: `KIKA-${orderId}`,
   //   user,
-  //   //deliveryAddress,
+  //   deliveryAddress,
   // });
-  const newOrder = await Order.create({
+
+  // console.log(newOrder);
+
+  const order = await Order.create({
     ...req.body,
-    orderId:`KIKA-${orderId}`,
+    orderId,
     user,
-    deliveryAddress:req.body.deliveryAddress,
-  });
- 
-  if(newOrder){
-  let orders = newOrder.orderItems
-  //   getting each product vendor email
-  const vendorsID = newOrder.orderItems.map((item) => item.vendor)
-  
-  const vendors = vendorsID.filter((id,index)=>{
-    return vendorsID.indexOf(id) === index
+    deliveryAddress,
   });
 
-  vendors.forEach(async (id) => {
-    let vendorItems = orders.filter((order)=>{
-      return `${order.vendor}`.includes(id)
-    })
-    let totalPrice = vendorItems
-    .reduce((prev,current)=>{
-     return prev + (current.price * current.quantity)
-    },0)
-
-    const newVendorOrder = await vendorOrder.create({
-      orderId: newOrder.orderId,
-      products: [...vendorItems],
-      vendor: id,
-      totalPrice,
-      user: newOrder.user,
-      deliveryAddress: newOrder.deliveryAddress,
-    });
-    
-    console.log('vendor own order is', newVendorOrder);
-  });
-}
   //   mailgun()
   //   .messages()
   //   .send(
@@ -77,14 +49,23 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   //     }
   //   );
 
-  
+  //   getting each product vendor email
+  // const vendorsID = newOrder.orderItems.map((item) => item.vendor);
+  // let vendors = [];
 
   // console.log(vendorsID);
 
+  // vendorsID.forEach(async (id) => {
+  //   let vendor = await Vendor.findById(id);
+  //   console.log('vendor is', vendor);
+  //   // vendors.push(vendor);
+  // });
 
+  //   console.log(vendors);
 
-  res.status(201).send({ message: 'New Order Created', newOrder });
+  res.status(201).send({ message: 'New Order Created', order });
 });
+
 
 exports.getOrder = asyncHandler(async (req, res, next) => {
   const order = await Order.findById(req.params.id);
@@ -111,6 +92,10 @@ exports.getVendorOrders = asyncHandler(async (req, res, next) => {
     select: 'name email',
   });
   const user = await User.findById(order[0].user)
+  const newOrder = {
+    ...order[0]._doc,
+    buyer:user.name
+  }
 
   if (!order) {
     return next(
@@ -123,7 +108,7 @@ exports.getVendorOrders = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Vendor orders retrieved!',
-    data: {order,buyer:user.name}
+    data: [newOrder]
      
   });
 })
