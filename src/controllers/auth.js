@@ -3,6 +3,7 @@ const asyncHandler = require('middleware/async');
 const sendTokenResponse = require('utils/sendTokenResponse');
 const { cloudinary } = require('middleware/cloudinary');
 const { dataUri } = require('utils/multer');
+const {transporter} = require('utils/nodemail')
 
 const User = require('models/User');
 const Vendor = require('models/Vendor');
@@ -26,6 +27,20 @@ exports.auth = asyncHandler(async (req, res) => {
   }else if(existingBusiness_name){
     return errorResponse('business_name')
   }else{
+    let mailOptions = {
+      from: 'kikathriftstore@gmail.com',
+      to: `${email}`,
+      subject: 'Hi Chuma!',
+      text: 'Still cleaning up..'
+      };
+      
+      transporter.sendMail(mailOptions, function(err, data) {
+          if (err) {
+            console.log("Error " + err);
+          } else {
+            console.log("Email sent successfully");
+          }
+        });
     res.status(200).send({success: true})
   }
 
@@ -35,13 +50,35 @@ exports.auth = asyncHandler(async (req, res) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  // const { name, email, password, phone, deliveryAddress } = req.body;
+  const { name, email } = req.body;
   
+  let user_name = name.split(" ")[0];
+  let mailOptions = {
+    from: 'kikathriftstore@gmail.com',
+    to: `${email}`,
+    subject: 'Welcome to Kika!',
+    text: `Hey ${user_name}!
+
+    Welcome to kika, we are glad to have you onboard!
+
+    Best regards,
+    The Kika Team.
+    ` 
+    };
+
   // Create user
   const user = await User.create({
     ...req.body,
   });
 
+  // Send mail.
+  transporter.sendMail(mailOptions, function(err, data) {
+    if (err) {
+      console.log("Error " + err);
+    } else {
+      console.log("Email sent successfully");
+    }
+  });
   sendTokenResponse(user, 200, res);
 });
 
@@ -49,7 +86,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register/vendor
 // @access    Public
 exports.registerVendor = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
+  const { email, name } = req.body;
 
   const existingUser = await User.findOne({ email });
 
@@ -65,12 +102,36 @@ exports.registerVendor = asyncHandler(async (req, res, next) => {
 
   const file = dataUri(req).content;
   const result = await cloudinary.uploader.upload(file, { folder: 'ID_CARDS' });
+ 
+  let user_name = name.split(" ")[0];
+  let mailOptions = {
+    from: 'kikathriftstore@gmail.com',
+    to: `${email}`,
+    subject: 'Welcome to Kika!',
+    text: `Hey ${user_name}!
 
+    Welcome to kika, we are glad to have you onboard!
+
+    Best regards,
+    The Kika Team.
+    ` 
+    };
+    
+  
   // Create vendor
   const vendor = await Vendor.create({
     ...req.body,
     id_card: result.secure_url,
     cloudinary_id: result.public_id,
+  });
+
+  // Send mail.
+  transporter.sendMail(mailOptions, function(err, data) {
+    if (err) {
+      console.log("Error " + err);
+    } else {
+      console.log("Email sent successfully");
+    }
   });
 
   sendTokenResponse(vendor, 200, res);
