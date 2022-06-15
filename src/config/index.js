@@ -15,8 +15,12 @@ module.exports = {
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   cloud_api_key: process.env.CLOUDINARY_API_KEY,
   cloud_api_secret: process.env.CLOUDINARY_API_SECRET,
-};
-
-
+  mail_username: process.env.MAIL_USERNAME,
+  mail_password: process.env.MAIL_PASSWORD,
+  oauth_client_id: process.env.OAUTH_CLIENT_ID,
+  oauth_client_secret: process.env.OAUTH_CLIENT_SECRET,
+  oauth_refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+  key: 'kikathriftstore@gmail.com'
+ };
 
 
